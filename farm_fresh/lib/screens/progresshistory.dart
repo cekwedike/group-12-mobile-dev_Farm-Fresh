@@ -5,6 +5,8 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -14,6 +16,8 @@ class MyApp extends StatelessWidget {
 }
 
 class PurchaseHistoryScreen extends StatelessWidget {
+  const PurchaseHistoryScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,12 +25,12 @@ class PurchaseHistoryScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.green),
+          icon: const Icon(Icons.arrow_back, color: Colors.green),
           onPressed: () {
             // Implement back navigation
           },
         ),
-        title: Text(
+        title: const Text(
           'Purchase History',
           style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
         ),
@@ -50,7 +54,7 @@ class PurchaseHistoryScreen extends StatelessWidget {
         selectedItemColor: Colors.green,
         unselectedItemColor: Colors.grey,
         currentIndex: 2, // Set the default selected item to Profile
-        items: [
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
@@ -70,7 +74,7 @@ class PurchaseHistoryScreen extends StatelessWidget {
 
   Widget buildListTile(String date, String title, String amount, IconData icon, Color iconColor) {
     return ListTile(
-      contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+      contentPadding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
       leading: CircleAvatar(
         backgroundColor: Colors.grey[200],
         child: Icon(icon, color: iconColor),
