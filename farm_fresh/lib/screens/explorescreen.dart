@@ -1,25 +1,5 @@
+// lib/screens/explore_screen.dart
 import 'package:flutter/material.dart';
-
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Farm Fresh',
-      theme: ThemeData(
-        primaryColor: const Color(0xFF1B8E3D),
-        scaffoldBackgroundColor: Colors.white,
-      ),
-      home: const FarmFreshScreen(),
-    );
-  }
-}
 
 class FarmFreshScreen extends StatelessWidget {
   const FarmFreshScreen({super.key});
@@ -129,8 +109,13 @@ class FarmFreshScreen extends StatelessWidget {
             BottomNavigationBarItem(
               icon: Icon(Icons.person_outline),
               label: 'Profile',
-            ),
+              ),
           ],
+          onTap: (index) {
+            if (index == 2) {
+              Navigator.pushNamed(context, '/purchase_history');
+            }
+          },
         ),
       ),
     );
