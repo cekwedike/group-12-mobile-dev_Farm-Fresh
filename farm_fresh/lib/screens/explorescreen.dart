@@ -5,7 +5,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
 }
 
 class FarmFreshScreen extends StatelessWidget {
-  const FarmFreshScreen({Key? key}) : super(key: key);
+  const FarmFreshScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -138,7 +138,7 @@ class FarmFreshScreen extends StatelessWidget {
 }
 
 class ProductCard extends StatelessWidget {
-  const ProductCard({Key? key}) : super(key: key);
+  const ProductCard({super.key});
 
   @override
   Widget build(BuildContext context) {
