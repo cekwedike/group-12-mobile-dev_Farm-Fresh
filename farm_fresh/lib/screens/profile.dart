@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+  const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -195,9 +195,9 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
-                child: Row(
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
+                  children: [
                     Icon(Icons.logout, size: 20),
                     SizedBox(width: 8),
                     Text(
