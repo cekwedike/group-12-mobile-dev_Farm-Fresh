@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'screens/explorescreen.dart';
 import 'screens/purchase_history_screen.dart';
+import 'screens/profile.dart';
 
 void main() {
   runApp(const MyApp());
