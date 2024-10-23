@@ -1,5 +1,6 @@
 // lib/main.dart
 import 'package:flutter/material.dart';
+import 'screens/explorescreen.dart';
 import 'screens/purchase_history_screen.dart';
 
 void main() {
@@ -12,12 +13,17 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Farm Fresh',
       theme: ThemeData(
-        primaryColor: Colors.green,
+        primaryColor: const Color(0xFF1B8E3D),
         scaffoldBackgroundColor: Colors.white,
       ),
-      home: const PurchaseHistoryScreen(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const FarmFreshScreen(),
+        '/purchase_history': (context) => const PurchaseHistoryScreen(),
+      },
     );
   }
 }
