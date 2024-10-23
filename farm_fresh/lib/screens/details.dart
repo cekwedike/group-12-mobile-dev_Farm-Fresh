@@ -1,5 +1,5 @@
+// lib/screens/details.dart
 import 'package:flutter/material.dart';
-
 
 class ProductDetailScreen extends StatefulWidget {
   const ProductDetailScreen({super.key});
@@ -10,15 +10,21 @@ class ProductDetailScreen extends StatefulWidget {
 }
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
-  int _selectedIndex = 0;  // For bottom navigation bar state
+  int _selectedIndex = 0;
 
-  // Method to handle bottom navigation bar item selection
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
-    // You can add navigation logic here depending on which tab is selected
-    // For now, it will just update the selected index.
+    
+    switch (index) {
+      case 0:
+        Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+        break;
+      case 2:
+        Navigator.pushNamed(context, '/purchase_history');
+        break;
+    }
   }
 
   @override
@@ -32,11 +38,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              // Display the product image (berries)
               ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: Image.asset(
-                  'assets/berries.png',
+                  'assets/berries.jpg', // Updated to match the asset name from explore screen
                   height: 150,
                   width: 100,
                   fit: BoxFit.cover,
@@ -58,7 +63,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 ),
               ),
               const SizedBox(height: 10),
-              // Quantity and Add to Cart
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -77,7 +81,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 ],
               ),
               const SizedBox(height: 20),
-              // Invoice Section
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -99,7 +102,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              // Delivery Details
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -122,46 +124,58 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              // Add to Cart Button
               ElevatedButton(
                 onPressed: () {
                   // Add to cart logic will be added here
                 },
-                // ignore: sort_child_properties_last
-                child: const Text('Add to Cart'), 
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
+                  backgroundColor: const Color(0xFF1B8E3D),
                   minimumSize: const Size(double.infinity, 50),
                 ),
+                child: const Text('Add to Cart'),
               ),
             ],
           ),
         ),
       ),
-      // Bottom Navigation Bar
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          border: Border(
+            top: BorderSide(
+              color: Colors.grey.shade200,
+              width: 1,
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
-            label: 'Cart',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.green,
-        onTap: _onItemTapped,
+        ),
+        child: BottomNavigationBar(
+          elevation: 0,
+          backgroundColor: Colors.white,
+          selectedItemColor: const Color(0xFF1B8E3D),
+          unselectedItemColor: Colors.grey,
+          currentIndex: _selectedIndex,
+          selectedFontSize: 12,
+          unselectedFontSize: 12,
+          type: BottomNavigationBarType.fixed,
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home_outlined),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.shopping_cart_outlined),
+              label: 'Cart',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person_outline),
+              label: 'Profile',
+            ),
+          ],
+          onTap: _onItemTapped,
+        ),
       ),
     );
   }
 
-  // Helper widget to build invoice items
   Widget _buildInvoiceItem(String label, String amount, [Color? color]) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
