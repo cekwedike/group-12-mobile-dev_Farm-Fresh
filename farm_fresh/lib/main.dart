@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'screens/explorescreen.dart';
 import 'screens/purchase_history_screen.dart';
 import 'screens/details.dart';
-// import 'screens/profile.dart';
+import 'screens/profile.dart';
 
 void main() {
   runApp(const MyApp());
@@ -36,6 +36,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => const FarmFreshScreen(),
         '/purchase_history': (context) => const PurchaseHistoryScreen(),
         '/product_details': (context) => const ProductDetailScreen(),
+        '/profile': (context) => const ProfileScreen(),
       },
     );
   }
