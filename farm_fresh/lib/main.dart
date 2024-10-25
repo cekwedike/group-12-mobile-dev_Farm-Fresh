@@ -4,6 +4,7 @@ import 'screens/explorescreen.dart';
 import 'screens/purchase_history_screen.dart';
 import 'screens/details.dart';
 import 'screens/profile.dart';
+import 'screens/sign_up_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -37,6 +38,7 @@ class MyApp extends StatelessWidget {
         '/purchase_history': (context) => const PurchaseHistoryScreen(),
         '/product_details': (context) => const ProductDetailScreen(),
         '/profile': (context) => const ProfileScreen(),
+        '/sign_up': (context) => const SignUpScreen(),    
       },
     );
   }
