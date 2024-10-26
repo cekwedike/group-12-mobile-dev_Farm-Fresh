@@ -46,21 +46,21 @@ class _CartPageState extends State<CartPage> {
   // List of CartItem objects for the cart
   List<CartItem> cartItems = [
     CartItem(
-      name: "Robin",
+      name: "Strawberries",
       description: "Pack of 10",
       quantity: 1,
       price: 450.0,
       image: 'assets/berries.jpg', // Path as a String
     ),
     CartItem(
-      name: "Robin 4,9 Shivalik 250ml",
+      name: "Raspberries",
       description: "Pack of 10",
       quantity: 1,
       price: 450.0,
       image: 'assets/berries.jpg', // Path as a String
     ),
     CartItem(
-      name: "Sahib Akira Sahib Pesticides Pvt Ltd",
+      name: "Cranberries",
       description: "Pack of 10",
       quantity: 1,
       price: 450.0,
