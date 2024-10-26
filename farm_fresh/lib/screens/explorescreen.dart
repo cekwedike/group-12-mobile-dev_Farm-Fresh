@@ -72,7 +72,7 @@ class FarmFreshScreen extends StatelessWidget {
               crossAxisCount: 2,
               mainAxisSpacing: 16,
               crossAxisSpacing: 16,
-              childAspectRatio: 1, // Increased from 0.9 to 1
+              childAspectRatio: 0.6,  // Adjusted aspect ratio
               children: List.generate(4, (index) => const ProductCard()),
             ),
           ),
@@ -110,7 +110,11 @@ class FarmFreshScreen extends StatelessWidget {
               label: 'Profile',
             ),
           ],
-          onTap: (index) {},
+          onTap: (index) {
+            if (index == 2) {
+              Navigator.pushNamed(context, '/profile');
+            }
+          },
         ),
       ),
     );
@@ -148,7 +152,7 @@ class ProductCard extends StatelessWidget {
                     ),
                     child: Image.asset(
                       'assets/berries.jpg',
-                      height: constraints.maxHeight * 0.6, // Slightly increased to accommodate better
+                      height: constraints.maxHeight * 0.4, // Dynamic height based on constraints
                       width: double.infinity,
                       fit: BoxFit.cover,
                     ),
@@ -172,7 +176,7 @@ class ProductCard extends StatelessWidget {
                 ],
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6), // Reduced padding
+                padding: const EdgeInsets.all(12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -227,7 +231,7 @@ class ProductCard extends StatelessWidget {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          padding: const EdgeInsets.symmetric(vertical: 8), // Reduced button padding
+                          padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
                         child: const Text(
                           'Add to Cart',
