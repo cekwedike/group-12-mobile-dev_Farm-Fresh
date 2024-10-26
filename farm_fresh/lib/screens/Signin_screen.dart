@@ -15,10 +15,6 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.green,
       ),
       home: SignInScreen(),
-      routes: {
-        '/sign_up': (context) => const SignUpScreen(), // Add your SignUpScreen widget here
-        '/farm_fresh_screen': (context) => const FarmFreshScreen(), // Add your FarmFreshScreen widget here
-      },
     );
   }
 }
@@ -41,7 +37,7 @@ class SignInScreen extends StatelessWidget {
             const Text(
               'Sign In',
               style: TextStyle(
-                fontSize: 32,
+                fontSize: 32, // Increased font size for title
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -49,7 +45,7 @@ class SignInScreen extends StatelessWidget {
             const Text(
               'Enter your email and password',
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 14, // Smaller font size for subtitle
                 color: Colors.grey,
               ),
             ),
@@ -83,25 +79,14 @@ class SignInScreen extends StatelessWidget {
                 // Handle login
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                foregroundColor: Colors.black,
+                backgroundColor: Colors.green, // Keep the button green
+                foregroundColor: Colors.black, // Change font color to black
                 padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
               ),
-              child: const Text('LOGIN'),
+              child: Text('LOGIN'),
             ),
             const SizedBox(height: 16.0),
-            GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(context, '/sign_up'); // Navigate to SignUpScreen
-              },
-              child: const Text(
-                "Don't have an account? Sign up",
-                style: TextStyle(
-                  decoration: TextDecoration.underline,
-                  color: Colors.blue,
-                ),
-              ),
-            ),
+            const Text("Don't have an account? Sign up"),
             const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () {
@@ -126,46 +111,14 @@ class SignInScreen extends StatelessWidget {
             const SizedBox(height: 16.0),
             TextButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/farm_fresh_screen'); // Navigate to FarmFreshScreen
+                // Handle skip action
               },
-              style: TextButton.styleFrom(),
-              child: const Text('Skip now -->'),
+              style: TextButton.styleFrom(
+              ),
+              child: Text('Skip now -->'),
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-// Ensure that SignUpScreen and FarmFreshScreen are properly defined
-class SignUpScreen extends StatelessWidget {
-  const SignUpScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Sign Up'),
-      ),
-      body: const Center(
-        child: Text('SignUp Screen'),
-      ),
-    );
-  }
-}
-
-class FarmFreshScreen extends StatelessWidget {
-  const FarmFreshScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Farm Fresh'),
-      ),
-      body: const Center(
-        child: Text('Welcome to Farm Fresh!'),
       ),
     );
   }

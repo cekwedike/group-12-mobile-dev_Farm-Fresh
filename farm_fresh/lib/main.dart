@@ -66,7 +66,7 @@ class SplashScreen extends StatelessWidget {
       Navigator.pushReplacementNamed(context, '/sign_up');
     });
 
-    return const Scaffold(
+    return Scaffold(
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
