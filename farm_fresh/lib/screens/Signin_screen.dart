@@ -112,6 +112,7 @@ class SignInScreen extends StatelessWidget {
             TextButton(
               onPressed: () {
                 // Handle skip action
+                Navigator.pushReplacementNamed(context, '/');
               },
               style: TextButton.styleFrom(
               ),
