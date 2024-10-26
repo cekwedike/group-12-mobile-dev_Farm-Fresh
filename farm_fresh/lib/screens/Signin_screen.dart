@@ -5,6 +5,8 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -18,11 +20,13 @@ class MyApp extends StatelessWidget {
 }
 
 class SignInScreen extends StatelessWidget {
+  const SignInScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sign In'),
+        title: const Text('Sign In'),
         centerTitle: true,
       ),
       body: Padding(
@@ -30,69 +34,69 @@ class SignInScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
+            const Text(
               'Sign In',
               style: TextStyle(
                 fontSize: 32, // Increased font size for title
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 8.0),
-            Text(
+            const SizedBox(height: 8.0),
+            const Text(
               'Enter your email and password',
               style: TextStyle(
                 fontSize: 14, // Smaller font size for subtitle
                 color: Colors.grey,
               ),
             ),
-            SizedBox(height: 32.0),
-            TextField(
+            const SizedBox(height: 32.0),
+            const TextField(
               decoration: InputDecoration(
                 labelText: 'Email',
                 border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             TextField(
               obscureText: true,
               decoration: InputDecoration(
                 labelText: 'Password',
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
                 suffix: GestureDetector(
                   onTap: () {
                     // Handle forgot password
                   },
-                  child: Text(
+                  child: const Text(
                     'Forgot password?',
                     style: TextStyle(color: Colors.orange),
                   ),
                 ),
               ),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () {
                 // Handle login
               },
-              child: Text('LOGIN'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green, // Keep the button green
                 foregroundColor: Colors.black, // Change font color to black
-                padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
+                padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
               ),
+              child: Text('LOGIN'),
             ),
-            SizedBox(height: 16.0),
-            Text("Don't have an account? Sign up"),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
+            const Text("Don't have an account? Sign up"),
+            const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () {
                 // Handle Google sign in
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
+                padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
               ),
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
@@ -104,14 +108,14 @@ class SignInScreen extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             TextButton(
               onPressed: () {
                 // Handle skip action
               },
-              child: Text('Skip now -->'),
               style: TextButton.styleFrom(
               ),
+              child: Text('Skip now -->'),
             ),
           ],
         ),
