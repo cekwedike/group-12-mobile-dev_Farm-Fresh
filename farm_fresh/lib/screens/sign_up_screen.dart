@@ -20,22 +20,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Sign Up Title
             const Text(
               'Sign Up',
               style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 10),
-            // Subtitle
             const Text(
               'First create your account',
               style: TextStyle(color: Colors.grey),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 30),
-            
-            // Full Name TextField
             const TextField(
               decoration: InputDecoration(
                 labelText: 'Full name',
@@ -43,8 +39,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
             ),
             const SizedBox(height: 15),
-            
-            // Email TextField
             const TextField(
               decoration: InputDecoration(
                 labelText: 'Email',
@@ -52,8 +46,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
             ),
             const SizedBox(height: 15),
-            
-            // Password TextField
             TextField(
               obscureText: _obscurePassword,
               decoration: InputDecoration(
@@ -72,8 +64,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
             ),
             const SizedBox(height: 15),
-            
-            // Confirm Password TextField
             TextField(
               obscureText: _obscureConfirmPassword,
               decoration: InputDecoration(
@@ -92,8 +82,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            
-            // Sign Up Button
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
@@ -104,10 +92,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               },
               child: const Text('SIGN UP'),
             ),
-            
             const SizedBox(height: 10),
-            
-            // Already have an account? Login
             Center(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -115,7 +100,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   const Text('Already have an account?'),
                   TextButton(
                     onPressed: () {
-                      // Navigate to Login screen
+                      // Navigate to the Sign-In screen
+                      Navigator.pushNamed(context, '/sign_in');
                     },
                     child: const Text(
                       'Login',
@@ -125,12 +111,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ],
               ),
             ),
-            
-            // Skip Button
             Center(
               child: TextButton(
                 onPressed: () {
-                  // Handle Skip logic
+                  // Navigate to the FarmFreshScreen
+                  Navigator.pushReplacementNamed(context, '/');
                 },
                 child: const Text('Skip now -->'),
               ),
