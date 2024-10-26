@@ -50,21 +50,21 @@ class _CartPageState extends State<CartPage> {
       description: "Pack of 10",
       quantity: 1,
       price: 450.0,
-      image: 'lib/img/can-443123_1280.png', // Path as a String
+      image: 'assets/berries.jpg', // Path as a String
     ),
     CartItem(
       name: "Robin 4,9 Shivalik 250ml",
       description: "Pack of 10",
       quantity: 1,
       price: 450.0,
-      image: 'lib/img/can-443123_1280.png', // Path as a String
+      image: 'assets/berries.jpg', // Path as a String
     ),
     CartItem(
       name: "Sahib Akira Sahib Pesticides Pvt Ltd",
       description: "Pack of 10",
       quantity: 1,
       price: 450.0,
-      image: 'lib/img/can-443123_1280.png', // Path as a String
+      image: 'assets/berries.jpg', // Path as a String
     ),
   ];
 
