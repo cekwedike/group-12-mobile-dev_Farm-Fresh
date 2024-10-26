@@ -113,7 +113,7 @@ class FarmFreshScreen extends StatelessWidget {
           ],
           onTap: (index) {
             if (index == 2) {
-              Navigator.pushNamed(context, '/purchase_history');
+              Navigator.pushNamed(context, '/profile');
             }
           },
         ),
