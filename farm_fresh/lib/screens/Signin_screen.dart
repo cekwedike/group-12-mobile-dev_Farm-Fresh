@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: SignInScreen(),
+      home: const SignInScreen(),
     );
   }
 }
@@ -83,7 +83,7 @@ class SignInScreen extends StatelessWidget {
                 foregroundColor: Colors.black, // Change font color to black
                 padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
               ),
-              child: Text('LOGIN'),
+              child: const Text('LOGIN'),
             ),
             const SizedBox(height: 16.0),
             const Text("Don't have an account? Sign up"),
@@ -115,7 +115,7 @@ class SignInScreen extends StatelessWidget {
               },
               style: TextButton.styleFrom(
               ),
-              child: Text('Skip now -->'),
+              child: const Text('Skip now -->'),
             ),
           ],
         ),
