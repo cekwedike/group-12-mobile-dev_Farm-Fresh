@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
         '/cart' : (context) => const CartPage(),
         '/balance_screen' : (context) => const BalanceScreen(),
         '/splash_screen' : (context) => const SplashScreen(),
-        '/sign_in' : (context) => SignInScreen(),
+        '/sign_in' : (context) => const SignInScreen(),
       },
     );
   }

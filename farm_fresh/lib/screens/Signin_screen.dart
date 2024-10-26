@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -14,7 +14,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: SignInScreen(),
+      home: const SignInScreen(),
+      routes: {
+        '/sign_up': (context) => const SignUpScreen(), // Ensure this is defined elsewhere
+        '/': (context) => const FarmFreshScreen(), // Ensure this is defined elsewhere
+      },
     );
   }
 }
@@ -37,7 +41,7 @@ class SignInScreen extends StatelessWidget {
             const Text(
               'Sign In',
               style: TextStyle(
-                fontSize: 32, // Increased font size for title
+                fontSize: 32, 
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -45,7 +49,7 @@ class SignInScreen extends StatelessWidget {
             const Text(
               'Enter your email and password',
               style: TextStyle(
-                fontSize: 14, // Smaller font size for subtitle
+                fontSize: 14,
                 color: Colors.grey,
               ),
             ),
@@ -79,14 +83,21 @@ class SignInScreen extends StatelessWidget {
                 // Handle login
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green, // Keep the button green
-                foregroundColor: Colors.black, // Change font color to black
+                backgroundColor: Colors.green,
+                foregroundColor: Colors.black,
                 padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
               ),
-              child: Text('LOGIN'),
+              child: const Text('LOGIN'),
             ),
             const SizedBox(height: 16.0),
-            const Text("Don't have an account? Sign up"),
+            GestureDetector(
+              onTap: () {
+                // Navigate to Sign Up screen
+                Navigator.pushNamed(context, '/sign_up');
+              },
+              child: const Text("Don't have an account? Sign up",
+                  style: TextStyle(color: Colors.blue)),
+            ),
             const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () {
@@ -111,11 +122,11 @@ class SignInScreen extends StatelessWidget {
             const SizedBox(height: 16.0),
             TextButton(
               onPressed: () {
-                // Handle skip action
+                // Navigate to FarmFreshScreen
+                Navigator.pushReplacementNamed(context, '/');
               },
-              style: TextButton.styleFrom(
-              ),
-              child: Text('Skip now -->'),
+              style: TextButton.styleFrom(),
+              child: const Text('Skip now -->'),
             ),
           ],
         ),
