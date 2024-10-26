@@ -111,6 +111,10 @@ class FarmFreshScreen extends StatelessWidget {
             ),
           ],
           onTap: (index) {
+            // Handle navigation
+            if (index == 0) {
+              Navigator.pushNamed(context, '/');
+            }
             if (index == 1) {
               Navigator.pushNamed(context, '/cart');
             }
