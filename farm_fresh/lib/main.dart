@@ -7,6 +7,8 @@ import 'screens/details.dart';
 import 'screens/profile.dart';
 import 'screens/sign_up_screen.dart';
 import 'screens/balance_screen.dart';
+import 'screens/splash_screen.dart';
+import 'screens/Signin_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -44,6 +46,8 @@ class MyApp extends StatelessWidget {
         '/balance': (context) => const BalanceScreen(),
         '/cart' : (context) => const CartPage(),
         '/balance_screen' : (context) => const BalanceScreen(),
+        '/splash_screen' : (context) => const SplashScreen(),
+        '/sign_in' : (context) => const SignInScreen(),
       },
     );
   }
