@@ -40,7 +40,7 @@ class ProfileScreen extends StatelessWidget {
                       child: Image.asset(
                         'assets/profile_wave.png',
                         height: 100,
-                        fit: BoxFit.contain,
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),

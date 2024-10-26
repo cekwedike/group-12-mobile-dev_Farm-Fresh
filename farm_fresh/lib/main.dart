@@ -1,4 +1,5 @@
 // lib/main.dart
+import 'package:farm_fresh/screens/cart_screen.dart';
 import 'package:flutter/material.dart';
 import 'screens/explorescreen.dart';
 import 'screens/purchase_history_screen.dart';
@@ -41,6 +42,7 @@ class MyApp extends StatelessWidget {
         '/profile': (context) => const ProfileScreen(),
         '/sign_up': (context) => const SignUpScreen(),
         '/balance': (context) => const BalanceScreen(),
+        '/cart' : (context) => const CartPage(),
       },
     );
   }
