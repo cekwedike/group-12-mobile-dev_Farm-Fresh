@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -14,10 +14,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: const SignInScreen(),
+      home: SignInScreen(),
       routes: {
-        '/sign_up': (context) => const SignUpScreen(), // Ensure this is defined elsewhere
-        '/': (context) => const FarmFreshScreen(), // Ensure this is defined elsewhere
+        '/sign_up': (context) => const SignUpScreen(), // Add your SignUpScreen widget here
+        '/farm_fresh_screen': (context) => const FarmFreshScreen(), // Add your FarmFreshScreen widget here
       },
     );
   }
@@ -41,7 +41,7 @@ class SignInScreen extends StatelessWidget {
             const Text(
               'Sign In',
               style: TextStyle(
-                fontSize: 32, 
+                fontSize: 32,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -92,11 +92,15 @@ class SignInScreen extends StatelessWidget {
             const SizedBox(height: 16.0),
             GestureDetector(
               onTap: () {
-                // Navigate to Sign Up screen
-                Navigator.pushNamed(context, '/sign_up');
+                Navigator.pushNamed(context, '/sign_up'); // Navigate to SignUpScreen
               },
-              child: const Text("Don't have an account? Sign up",
-                  style: TextStyle(color: Colors.blue)),
+              child: const Text(
+                "Don't have an account? Sign up",
+                style: TextStyle(
+                  decoration: TextDecoration.underline,
+                  color: Colors.blue,
+                ),
+              ),
             ),
             const SizedBox(height: 16.0),
             ElevatedButton(
@@ -122,14 +126,46 @@ class SignInScreen extends StatelessWidget {
             const SizedBox(height: 16.0),
             TextButton(
               onPressed: () {
-                // Navigate to FarmFreshScreen
-                Navigator.pushReplacementNamed(context, '/');
+                Navigator.pushNamed(context, '/farm_fresh_screen'); // Navigate to FarmFreshScreen
               },
               style: TextButton.styleFrom(),
               child: const Text('Skip now -->'),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// Ensure that SignUpScreen and FarmFreshScreen are properly defined
+class SignUpScreen extends StatelessWidget {
+  const SignUpScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Sign Up'),
+      ),
+      body: const Center(
+        child: Text('SignUp Screen'),
+      ),
+    );
+  }
+}
+
+class FarmFreshScreen extends StatelessWidget {
+  const FarmFreshScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Farm Fresh'),
+      ),
+      body: const Center(
+        child: Text('Welcome to Farm Fresh!'),
       ),
     );
   }
