@@ -81,12 +81,23 @@ class SignInScreen extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green, // Keep the button green
                 foregroundColor: Colors.black, // Change font color to black
-                padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
               ),
               child: const Text('LOGIN'),
             ),
             const SizedBox(height: 16.0),
-            const Text("Don't have an account? Sign up"),
+            const Text("Don't have an account?"),
+            TextButton(
+              onPressed: () {
+                // Navigate to the Sign-In screen
+                Navigator.pushNamed(context, '/sign_up');
+              },
+              child: const Text(
+                'Sign Up',
+                style: TextStyle(color: Colors.orange),
+              ),
+            ),
             const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () {
@@ -94,7 +105,8 @@ class SignInScreen extends StatelessWidget {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
               ),
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -114,8 +126,7 @@ class SignInScreen extends StatelessWidget {
                 // Handle skip action
                 Navigator.pushReplacementNamed(context, '/');
               },
-              style: TextButton.styleFrom(
-              ),
+              style: TextButton.styleFrom(),
               child: const Text('Skip now -->'),
             ),
           ],
