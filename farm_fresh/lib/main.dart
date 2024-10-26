@@ -1,5 +1,6 @@
-import 'dart:async';  // For Timer
-import 'dart:math';   // For generating random numbers
+// Main.dart
+import 'dart:async';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:farm_fresh/screens/explorescreen.dart';
 import 'package:farm_fresh/screens/purchase_history_screen.dart';
@@ -44,38 +45,140 @@ class MyApp extends StatelessWidget {
         '/profile': (context) => const ProfileScreen(),
         '/sign_up': (context) => const SignUpScreen(),
         '/balance': (context) => const BalanceScreen(),
-        '/cart' : (context) => const CartPage(),
-        '/balance_screen' : (context) => const BalanceScreen(),
-        '/splash_screen' : (context) => const SplashScreen(),
-        '/sign_in' : (context) => const SignInScreen(),
+        '/cart': (context) => const CartPage(),
+        '/balance_screen': (context) => const BalanceScreen(),
+        '/splash_screen': (context) => const SplashScreen(),
+        '/sign_in': (context) => const SignInScreen(),
       },
     );
   }
 }
 
-class SplashScreen extends StatelessWidget {
+class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // Generate a random delay between 8 to 12 seconds
-    final int randomSeconds = Random().nextInt(5) + 8;  // Random number between 8 and 12
+  State<SplashScreen> createState() => _SplashScreenState();
+}
 
-    // Navigate after a random delay
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Generate a random delay between 8 to 12 seconds
+    final int randomSeconds = Random().nextInt(5) + 8;
+    
     Timer(Duration(seconds: randomSeconds), () {
       Navigator.pushReplacementNamed(context, '/sign_up');
     });
+  }
 
-    return const Scaffold(
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.green,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Welcome to Farm Fresh!', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-            SizedBox(height: 20),
-            CircularProgressIndicator(),
-            SizedBox(height: 10),
-            Text('Loading...', style: TextStyle(fontSize: 16, color: Colors.grey)),
+            const Text(
+              'Welcome to Farm Fresh!',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 40),
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                // Main large logo with shadow
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.transparent,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.green.shade800.withOpacity(0.5),
+                        blurRadius: 10.0,
+                        spreadRadius: 5.0,
+                      ),
+                    ],
+                  ),
+                  child: ClipOval(
+                    child: Image.asset(
+                      'assets/logo.jpg',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                // Top logo with shadow
+                Positioned(
+                  bottom: 60,
+                  child: Container(
+                    width: 30,
+                    height: 30,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.transparent,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.green.shade800.withOpacity(0.5),
+                          blurRadius: 5.0,
+                          spreadRadius: 2.0,
+                        ),
+                      ],
+                    ),
+                    child: ClipOval(
+                      child: Image.asset(
+                        'assets/logo.jpg',
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                ),
+                // Bottom logo with shadow
+                Positioned(
+                  top: 60,
+                  child: Container(
+                    width: 30,
+                    height: 30,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.transparent,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.green.shade800.withOpacity(0.5),
+                          blurRadius: 5.0,
+                          spreadRadius: 2.0,
+                        ),
+                      ],
+                    ),
+                    child: ClipOval(
+                      child: Image.asset(
+                        'assets/logo.jpg',
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 30),
+            const CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            ),
+            const SizedBox(height: 10),
+            const Text(
+              'Loading...',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
           ],
         ),
       ),
