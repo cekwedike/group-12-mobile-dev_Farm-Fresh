@@ -25,14 +25,22 @@ class PurchaseHistoryScreen extends StatelessWidget {
       ),
       body: ListView(
         children: [
-          _buildPurchaseItem('17 Agustus 2021', 'McDonald\'s', 34.00, 'assets/mcdonalds_logo.png'),
-          _buildPurchaseItem('17 Agustus 2021', 'Game', 10.00, 'assets/game_icon.png'),
-          _buildPurchaseItem('17 Agustus 2021', 'Credit & Quota', 34.00, 'assets/credit_icon.png'),
-          _buildPurchaseItem('16 Agustus 2021', 'McDonald\'s', 34.00, 'assets/mcdonalds_logo.png'),
-          _buildPurchaseItem('15 Agustus 2021', 'McDonald\'s', 34.00, 'assets/mcdonalds_logo.png'),
-          _buildPurchaseItem('14 Agustus 2021', 'McDonald\'s', 34.00, 'assets/mcdonalds_logo.png'),
-          _buildPurchaseItem('13 Agustus 2021', 'McDonald\'s', 34.00, 'assets/mcdonalds_logo.png'),
-          _buildPurchaseItem('11 Agustus 2021', 'McDonald\'s', 34.00, 'assets/mcdonalds_logo.png'),
+          _buildPurchaseItem('17 August 2021', 'McDonald\'s', 34.00,
+              'assets/mcdonalds_logo.png'),
+          _buildPurchaseItem(
+              '17 August 2021', 'Game', 10.00, 'assets/game_icon.png'),
+          _buildPurchaseItem('17 August 2021', 'Credit & Quota', 34.00,
+              'assets/credit_icon.png'),
+          _buildPurchaseItem('16 August 2021', 'McDonald\'s', 34.00,
+              'assets/mcdonalds_logo.png'),
+          _buildPurchaseItem('15 August 2021', 'McDonald\'s', 34.00,
+              'assets/mcdonalds_logo.png'),
+          _buildPurchaseItem('14 August 2021', 'McDonald\'s', 34.00,
+              'assets/mcdonalds_logo.png'),
+          _buildPurchaseItem('13 August 2021', 'McDonald\'s', 34.00,
+              'assets/mcdonalds_logo.png'),
+          _buildPurchaseItem('11 August 2021', 'McDonald\'s', 34.00,
+              'assets/mcdonalds_logo.png'),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -53,11 +61,24 @@ class PurchaseHistoryScreen extends StatelessWidget {
             label: 'Profile',
           ),
         ],
+        onTap: (index) {
+          // Handle navigation
+          if (index == 0) {
+            Navigator.pushNamed(context, '/');
+          }
+          if (index == 1) {
+            Navigator.pushNamed(context, '/cart');
+          }
+          if (index == 2) {
+            Navigator.pushNamed(context, '/profile');
+          }
+        },
       ),
     );
   }
 
-  Widget _buildPurchaseItem(String date, String merchant, double amount, String iconPath) {
+  Widget _buildPurchaseItem(
+      String date, String merchant, double amount, String iconPath) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(

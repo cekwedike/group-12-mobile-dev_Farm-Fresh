@@ -248,6 +248,18 @@ class _CartPageState extends State<CartPage> {
             label: 'Profile',
           ),
         ],
+        onTap: (index) {
+          // Handle navigation
+          if (index == 0) {
+            Navigator.pushNamed(context, '/');
+          }
+          if (index == 1) {
+            Navigator.pushNamed(context, '/cart');
+          }
+          if (index == 2) {
+            Navigator.pushNamed(context, '/profile');
+          }
+        },
         selectedItemColor: Colors.green,
       ),
     );
