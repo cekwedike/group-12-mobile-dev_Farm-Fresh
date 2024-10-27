@@ -36,25 +36,45 @@ class CartItem {
 class CartPage extends StatefulWidget {
   const CartPage({super.key});
 
+  // This method creates the state for CartPage
   @override
   _CartPageState createState() => _CartPageState();
 }
 
 // State class for CartPage
 class _CartPageState extends State<CartPage> {
-  // Initialize an empty list of CartItem objects for the cart
-  List<CartItem> cartItems = [];
-
-  // Method to add items to the cart
-  void addToCart(CartItem item) {
-    setState(() {
-      cartItems.add(item);
-    });
-  }
+  // List of CartItem objects for the cart
+  List<CartItem> cartItems = [
+    CartItem(
+      name: "Strawberries",
+      description: "Pack of 10",
+      quantity: 1,
+      price: 450.0,
+      image: 'assets/berries.jpg', // Path as a String
+    ),
+    CartItem(
+      name: "Raspberries",
+      description: "Pack of 10",
+      quantity: 1,
+      price: 450.0,
+      image: 'assets/berries.jpg', // Path as a String
+    ),
+    CartItem(
+      name: "Cranberries",
+      description: "Pack of 10",
+      quantity: 1,
+      price: 450.0,
+      image: 'assets/berries.jpg', // Path as a String
+    ),
+  ];
 
   // Calculate the total price of the cart items
   double get totalPrice {
-    return cartItems.fold(0, (sum, item) => sum + item.quantity * item.price);
+    double total = 0;
+    for (var item in cartItems) {
+      total += item.quantity * item.price;
+    }
+    return total;
   }
 
   @override
@@ -85,7 +105,7 @@ class _CartPageState extends State<CartPage> {
                             item.image,
                             width: 50,
                             height: 50,
-                            fit: BoxFit.cover,
+                            fit: BoxFit.cover, // Adjusts the image fit
                           ),
                           const SizedBox(width: 16),
                           Expanded(
@@ -131,7 +151,8 @@ class _CartPageState extends State<CartPage> {
                                       ),
                                     ),
                                     IconButton(
-                                      icon: const Icon(Icons.delete, color: Colors.red),
+                                      icon: const Icon(Icons.delete,
+                                          color: Colors.red),
                                       onPressed: () {
                                         setState(() {
                                           cartItems.removeAt(index);
