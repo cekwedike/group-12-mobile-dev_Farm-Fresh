@@ -155,17 +155,7 @@ class ProductCard extends StatelessWidget {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      Navigator.pushNamed(
-                        context,
-                        '/details',
-                        arguments: {
-                          'title': 'Berries',
-                          'price': 'RWF 500',
-                          'rating': '4.5',
-                          'reviews': '672',
-                          'image': 'assets/berries.jpg',
-                        },
-                      );
+                      Navigator.pushNamed(context, '/product_details');
                     },
                     child: ClipRRect(
                       borderRadius: const BorderRadius.vertical(
@@ -245,23 +235,8 @@ class ProductCard extends StatelessWidget {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: () async {
-                          // First add to cart
-                          // You might want to call your cart service here
-                          
-                          // Show a snackbar to confirm
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Added to cart'),
-                              duration: Duration(seconds: 1),
-                            ),
-                          );
-                          
-                          // Navigate to cart
-                          await Future.delayed(const Duration(seconds: 1));
-                          if (context.mounted) {
-                            Navigator.pushNamed(context, '/cart');
-                          }
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/cart');
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF1B8E3D),
