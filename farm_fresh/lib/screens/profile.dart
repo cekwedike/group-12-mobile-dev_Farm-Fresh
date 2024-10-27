@@ -87,181 +87,45 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    color: Colors.grey.shade200,
-                    width: 1,
-                  ),
-                ),
-              ),
-              child: ListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 4),
-                leading: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFE8F5E9),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Icon(
-                    Icons.account_balance_wallet_outlined,
-                    color: Color(0xFF1B8E3D),
-                    size: 24,
-                  ),
-                ),
-                title: const Text(
-                  'Balance',
-                  style: TextStyle(
-                    color: Colors.black87,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'RWF 100,000',
-                      style: TextStyle(
-                        color: Colors.grey.shade600,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    Icon(
-                      Icons.chevron_right,
-                      color: Colors.grey.shade400,
-                      size: 24,
-                    ),
-                  ],
-                ),
-                onTap: () {},
-              ),
+            ListTile(
+              leading: const Icon(Icons.account_balance_wallet_outlined, color: Color(0xFF1B8E3D)),
+              title: const Text('Balance'),
+              onTap: () => Navigator.pushNamed(context, '/balance'), // Navigate to Balance Screen
             ),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    color: Colors.grey.shade200,
-                    width: 1,
-                  ),
-                ),
-              ),
-              child: ListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 4),
-                leading: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFE8F5E9),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Icon(
-                    Icons.history,
-                    color: Color(0xFF1B8E3D),
-                    size: 24,
-                  ),
-                ),
-                title: const Text(
-                  'Purchase History',
-                  style: TextStyle(
-                    color: Colors.black87,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-                trailing: Icon(
-                  Icons.chevron_right,
-                  color: Colors.grey.shade400,
-                  size: 24,
-                ),
-                onTap: () {},
-              ),
+            ListTile(
+              leading: const Icon(Icons.history, color: Color(0xFF1B8E3D)),
+              title: const Text('Purchase History'),
+              onTap: () => Navigator.pushNamed(context, '/purchase_history'), // Navigate to Purchase History Screen
             ),
             const Spacer(),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16),
-              child: ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF4CAF50),
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.logout, size: 20),
-                    SizedBox(width: 8),
-                    Text(
-                      'Sign Out',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
+            ElevatedButton(
+              onPressed: () => Navigator.pushReplacementNamed(context, '/sign_in'), // Navigate back to Sign In Screen
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF4CAF50),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+              ),
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.logout),
+                  SizedBox(width: 8),
+                  Text('Sign Out'),
+                ],
               ),
             ),
             const SizedBox(height: 24),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(16),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    offset: const Offset(0, -1),
-                    blurRadius: 4,
-                  ),
-                ],
-              ),
-              child: BottomNavigationBar(
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                selectedItemColor: const Color(0xFF1B8E3D),
-                unselectedItemColor: Colors.grey,
-                currentIndex: 2,
-                selectedFontSize: 12,
-                unselectedFontSize: 12,
-                type: BottomNavigationBarType.fixed,
-                items: const [
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.home_outlined),
-                    label: 'Home',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.shopping_cart_outlined),
-                    label: 'Cart',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.person),
-                    label: 'Profile',
-                  ),
-                ],
-                onTap: (index) {
-                  // Handle navigation
-                  if (index == 0) {
-                    Navigator.pushNamed(context, '/');
-                  }
-                  if (index == 1) {
-                    Navigator.pushNamed(context, '/cart');
-                  }
-                  if (index == 2) {
-                    Navigator.pushNamed(context, '/profile');
-                  }
-                },
-              ),
+            BottomNavigationBar(
+              selectedItemColor: const Color(0xFF1B8E3D),
+              unselectedItemColor: Colors.grey,
+              currentIndex: 2,
+              items: const [
+                BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Home'),
+                BottomNavigationBarItem(icon: Icon(Icons.shopping_cart_outlined), label: 'Cart'),
+                BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+              ],
+              onTap: (index) {
+                // Handle bottom navigation bar taps
+              },
             ),
           ],
         ),
