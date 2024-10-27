@@ -1,4 +1,3 @@
-// lib/screens/purchase_history_screen.dart
 import 'package:flutter/material.dart';
 
 class PurchaseHistoryScreen extends StatelessWidget {
@@ -25,21 +24,21 @@ class PurchaseHistoryScreen extends StatelessWidget {
       ),
       body: ListView(
         children: [
-          _buildPurchaseItem('17 August 2021', 'McDonald\'s', 34.00,
+          _buildPurchaseItem('17 August 2021', 'McDonald\'s', 34000,
               'assets/mcdonalds_logo.png'),
           _buildPurchaseItem(
-              '17 August 2021', 'Game', 10.00, 'assets/game_icon.png'),
-          _buildPurchaseItem('17 August 2021', 'Credit & Quota', 34.00,
+              '17 August 2021', 'Game', 10000, 'assets/game_icon.png'),
+          _buildPurchaseItem('17 August 2021', 'Credit & Quota', 34000,
               'assets/credit_icon.png'),
-          _buildPurchaseItem('16 August 2021', 'McDonald\'s', 34.00,
+          _buildPurchaseItem('16 August 2021', 'McDonald\'s', 34000,
               'assets/mcdonalds_logo.png'),
-          _buildPurchaseItem('15 August 2021', 'McDonald\'s', 34.00,
+          _buildPurchaseItem('15 August 2021', 'McDonald\'s', 34000,
               'assets/mcdonalds_logo.png'),
-          _buildPurchaseItem('14 August 2021', 'McDonald\'s', 34.00,
+          _buildPurchaseItem('14 August 2021', 'McDonald\'s', 34000,
               'assets/mcdonalds_logo.png'),
-          _buildPurchaseItem('13 August 2021', 'McDonald\'s', 34.00,
+          _buildPurchaseItem('13 August 2021', 'McDonald\'s', 34000,
               'assets/mcdonalds_logo.png'),
-          _buildPurchaseItem('11 August 2021', 'McDonald\'s', 34.00,
+          _buildPurchaseItem('11 August 2021', 'McDonald\'s', 34000,
               'assets/mcdonalds_logo.png'),
         ],
       ),
@@ -64,13 +63,11 @@ class PurchaseHistoryScreen extends StatelessWidget {
         onTap: (index) {
           // Handle navigation
           if (index == 0) {
-            Navigator.pushNamed(context, '/');
-          }
-          if (index == 1) {
-            Navigator.pushNamed(context, '/cart');
-          }
-          if (index == 2) {
-            Navigator.pushNamed(context, '/profile');
+            Navigator.pushReplacementNamed(context, '/');
+          } else if (index == 1) {
+            Navigator.pushReplacementNamed(context, '/cart');
+          } else if (index == 2) {
+            Navigator.pushReplacementNamed(context, '/profile');
           }
         },
       ),
@@ -79,6 +76,12 @@ class PurchaseHistoryScreen extends StatelessWidget {
 
   Widget _buildPurchaseItem(
       String date, String merchant, double amount, String iconPath) {
+    // Format the amount with thousand separators
+    String formattedAmount = amount.toStringAsFixed(0).replaceAllMapped(
+          RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+          (Match m) => '${m[1]},',
+        );
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
@@ -116,7 +119,7 @@ class PurchaseHistoryScreen extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '\$ ${amount.toStringAsFixed(2)}',
+                  'RWF $formattedAmount',
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
