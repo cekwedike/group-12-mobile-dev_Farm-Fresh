@@ -19,9 +19,7 @@ class _BalanceScreenState extends State<BalanceScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.green),
-          onPressed: () {
-            // Handle back button
-          },
+          onPressed: () => Navigator.pop(context),
         ),
       ),
       body: Padding(
