@@ -1,3 +1,4 @@
+// explorescreen.dart
 import 'package:flutter/material.dart';
 
 class FarmFreshScreen extends StatelessWidget {
