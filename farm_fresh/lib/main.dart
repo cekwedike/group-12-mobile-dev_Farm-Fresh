@@ -10,6 +10,7 @@ import 'package:farm_fresh/screens/sign_up_screen.dart';
 import 'package:farm_fresh/screens/balance_screen.dart';
 import 'package:farm_fresh/screens/signin_screen.dart';
 import 'package:farm_fresh/screens/cart_screen.dart';
+import 'package:farm_fresh/screens/topupscreen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -49,6 +50,7 @@ class MyApp extends StatelessWidget {
         '/balance_screen': (context) => const BalanceScreen(),
         '/splash_screen': (context) => const SplashScreen(),
         '/sign_in': (context) => const SignInScreen(),
+        '/top_up': (context) => const TopUpScreen(),
       },
     );
   }

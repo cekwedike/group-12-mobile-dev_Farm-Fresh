@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 
 class BalanceScreen extends StatefulWidget {
   const BalanceScreen({super.key});
-
   @override
-  _BalanceScreenState createState() => _BalanceScreenState();
+  State<BalanceScreen> createState() => _BalanceScreenState();
 }
 
 class _BalanceScreenState extends State<BalanceScreen> {
@@ -74,7 +73,7 @@ class _BalanceScreenState extends State<BalanceScreen> {
                 padding: const EdgeInsets.symmetric(vertical: 15),
               ),
               onPressed: () {
-                // Handle top-up action
+                Navigator.pushNamed(context, '/top_up');
               },
               child: const Text('Top Up'),
             ),
@@ -102,13 +101,11 @@ class _BalanceScreenState extends State<BalanceScreen> {
         onTap: (index) {
           // Handle bottom navigation tap
           if (index == 0) {
-            Navigator.pushNamed(context, '/');
-          }
-          if (index == 1) {
-            Navigator.pushNamed(context, '/cart');
-          }
-          if (index == 2) {
-            Navigator.pushNamed(context, '/profile');
+            Navigator.pushReplacementNamed(context, '/');
+          } else if (index == 1) {
+            Navigator.pushReplacementNamed(context, '/cart');
+          } else if (index == 2) {
+            Navigator.pushReplacementNamed(context, '/profile');
           }
         },
       ),
