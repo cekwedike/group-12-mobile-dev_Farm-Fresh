@@ -153,15 +153,30 @@ class ProductCard extends StatelessWidget {
             children: [
               Stack(
                 children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(16),
-                    ),
-                    child: Image.asset(
-                      'assets/berries.jpg',
-                      height: constraints.maxHeight * 0.4, // Dynamic height based on constraints
-                      width: double.infinity,
-                      fit: BoxFit.cover,
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        '/details',
+                        arguments: {
+                          'title': 'Berries',
+                          'price': 'RWF 500',
+                          'rating': '4.5',
+                          'reviews': '672',
+                          'image': 'assets/berries.jpg',
+                        },
+                      );
+                    },
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(16),
+                      ),
+                      child: Image.asset(
+                        'assets/berries.jpg',
+                        height: constraints.maxHeight * 0.4,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                   Positioned(
@@ -230,7 +245,24 @@ class ProductCard extends StatelessWidget {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          // First add to cart
+                          // You might want to call your cart service here
+                          
+                          // Show a snackbar to confirm
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Added to cart'),
+                              duration: Duration(seconds: 1),
+                            ),
+                          );
+                          
+                          // Navigate to cart
+                          await Future.delayed(const Duration(seconds: 1));
+                          if (context.mounted) {
+                            Navigator.pushNamed(context, '/cart');
+                          }
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF1B8E3D),
                           foregroundColor: Colors.white,
