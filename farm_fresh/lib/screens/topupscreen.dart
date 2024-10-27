@@ -140,52 +140,36 @@ class TopUpScreen extends StatelessWidget {
             ),
           ),
           const Spacer(),
-          // Bottom Navigation Bar
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.1),
-                  spreadRadius: 1,
-                  blurRadius: 10,
-                ),
-              ],
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildNavItem(Icons.home_outlined, 'Home', false),
-                  _buildNavItem(Icons.shopping_cart_outlined, 'Cart', false),
-                  _buildNavItem(Icons.person_outline, 'Profile', true),
-                ],
-              ),
-            ),
-          ),
         ],
       ),
-    );
-  }
-
-  Widget _buildNavItem(IconData icon, String label, bool isSelected) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(
-          icon,
-          color: isSelected ? Colors.green : Colors.grey,
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            color: isSelected ? Colors.green : Colors.grey,
-            fontSize: 12,
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: 2, // Profile is selected
+        selectedItemColor: Colors.green,
+        unselectedItemColor: Colors.grey,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
           ),
-        ),
-      ],
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_cart),
+            label: 'Cart',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+        ],
+        onTap: (index) {
+          if (index == 0) {
+            Navigator.pushReplacementNamed(context, '/');
+          } else if (index == 1) {
+            Navigator.pushReplacementNamed(context, '/cart');
+          } else if (index == 2) {
+            Navigator.pushReplacementNamed(context, '/profile');
+          }
+        },
+      ),
     );
   }
 }
