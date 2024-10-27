@@ -24,21 +24,21 @@ class PurchaseHistoryScreen extends StatelessWidget {
       ),
       body: ListView(
         children: [
-          _buildPurchaseItem('17 August 2021', 'Strawberries', 34000,
+          _buildPurchaseItem('17 August 2021', 'Strawberries', 15500,
               'assets/berries.jpg'),
           _buildPurchaseItem(
-              '17 August 2021', 'Cranberries', 10000, 'assets/berries.jpg'),
-          _buildPurchaseItem('17 August 2021', 'Raspberries', 34000,
+              '17 August 2021', 'Cranberries', 22800, 'assets/berries.jpg'),
+          _buildPurchaseItem('17 August 2021', 'Raspberries', 18900,
               'assets/berries.jpg'),
-          _buildPurchaseItem('16 August 2021', 'Cranberries', 34000,
+          _buildPurchaseItem('16 August 2021', 'Cranberries', 12500,
               'assets/berries.jpg'),
-          _buildPurchaseItem('15 August 2021', 'Raspberries', 34000,
+          _buildPurchaseItem('15 August 2021', 'Raspberries', 27600,
               'assets/berries.jpg'),
-          _buildPurchaseItem('14 August 2021', 'Strawberries', 34000,
+          _buildPurchaseItem('14 August 2021', 'Strawberries', 19800,
               'assets/berries.jpg'),
-          _buildPurchaseItem('13 August 2021', 'Raspberries', 34000,
+          _buildPurchaseItem('13 August 2021', 'Raspberries', 23400,
               'assets/berries.jpg'),
-          _buildPurchaseItem('11 August 2021', 'Cranberries', 34000,
+          _buildPurchaseItem('11 August 2021', 'Cranberries', 16700,
               'assets/berries.jpg'),
         ],
       ),
@@ -102,9 +102,11 @@ class PurchaseHistoryScreen extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.grey[200],
               borderRadius: BorderRadius.circular(8),
+              image: DecorationImage(
+                image: AssetImage(iconPath),
+                fit: BoxFit.cover,
+              ),
             ),
-            padding: const EdgeInsets.all(8),
-            child: Image.asset(iconPath, fit: BoxFit.contain),
           ),
           const SizedBox(width: 12),
           Expanded(
