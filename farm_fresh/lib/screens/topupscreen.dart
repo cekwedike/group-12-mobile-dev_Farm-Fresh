@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class TopUpScreen extends StatelessWidget {
-  const TopUpScreen({Key? key}) : super(key: key);
+  const TopUpScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -64,9 +64,9 @@ class TopUpScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 16),
-                    Column(
+                    const Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children: [
                         Text(
                           'Transfer your money',
                           style: TextStyle(
@@ -114,9 +114,9 @@ class TopUpScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 16),
-                    Column(
+                    const Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children: [
                         Text(
                           'Transfer your money',
                           style: TextStyle(
