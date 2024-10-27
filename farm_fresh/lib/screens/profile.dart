@@ -88,18 +88,22 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             ListTile(
-              leading: const Icon(Icons.account_balance_wallet_outlined, color: Color(0xFF1B8E3D)),
+              leading: const Icon(Icons.account_balance_wallet_outlined,
+                  color: Color(0xFF1B8E3D)),
               title: const Text('Balance'),
-              onTap: () => Navigator.pushNamed(context, '/balance'), // Navigate to Balance Screen
+              onTap: () => Navigator.pushNamed(
+                  context, '/balance'), // Navigate to Balance Screen
             ),
             ListTile(
               leading: const Icon(Icons.history, color: Color(0xFF1B8E3D)),
               title: const Text('Purchase History'),
-              onTap: () => Navigator.pushNamed(context, '/purchase_history'), // Navigate to Purchase History Screen
+              onTap: () => Navigator.pushNamed(context,
+                  '/purchase_history'), // Navigate to Purchase History Screen
             ),
             const Spacer(),
             ElevatedButton(
-              onPressed: () => Navigator.pushReplacementNamed(context, '/sign_in'), // Navigate back to Sign In Screen
+              onPressed: () => Navigator.pushReplacementNamed(
+                  context, '/sign_in'), // Navigate back to Sign In Screen
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF4CAF50),
                 padding: const EdgeInsets.symmetric(vertical: 16),
@@ -119,12 +123,24 @@ class ProfileScreen extends StatelessWidget {
               unselectedItemColor: Colors.grey,
               currentIndex: 2,
               items: const [
-                BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Home'),
-                BottomNavigationBarItem(icon: Icon(Icons.shopping_cart_outlined), label: 'Cart'),
-                BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.home_outlined), label: 'Home'),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.shopping_cart_outlined), label: 'Cart'),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.person), label: 'Profile'),
               ],
               onTap: (index) {
                 // Handle bottom navigation bar taps
+                if (index == 0) {
+                  Navigator.pushNamed(context, '/');
+                }
+                if (index == 1) {
+                  Navigator.pushNamed(context, '/cart');
+                }
+                if (index == 2) {
+                  Navigator.pushNamed(context, '/profile');
+                }
               },
             ),
           ],

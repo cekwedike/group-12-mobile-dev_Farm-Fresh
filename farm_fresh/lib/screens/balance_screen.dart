@@ -43,7 +43,8 @@ class _BalanceScreenState extends State<BalanceScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Balance', style: TextStyle(color: Colors.grey)),
+                      const Text('Balance',
+                          style: TextStyle(color: Colors.grey)),
                       const SizedBox(height: 5),
                       Text(
                         _balanceVisible ? 'RWF 100,000' : '******',
@@ -102,16 +103,14 @@ class _BalanceScreenState extends State<BalanceScreen> {
         ],
         onTap: (index) {
           // Handle bottom navigation tap
-          switch (index) {
-            case 0:
-              // Navigate to Home
-              break;
-            case 1:
-              // Navigate to Cart
-              break;
-            case 2:
-              // Navigate to Profile (already here)
-              break;
+          if (index == 0) {
+            Navigator.pushNamed(context, '/');
+          }
+          if (index == 1) {
+            Navigator.pushNamed(context, '/cart');
+          }
+          if (index == 2) {
+            Navigator.pushNamed(context, '/profile');
           }
         },
       ),
