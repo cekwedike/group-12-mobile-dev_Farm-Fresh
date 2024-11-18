@@ -1,6 +1,6 @@
-// Main.dart
 import 'dart:async';
 import 'dart:math';
+import 'package:farm_fresh/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:farm_fresh/screens/explorescreen.dart';
 import 'package:farm_fresh/screens/purchase_history_screen.dart';
@@ -11,9 +11,25 @@ import 'package:farm_fresh/screens/balance_screen.dart';
 import 'package:farm_fresh/screens/signin_screen.dart';
 import 'package:farm_fresh/screens/cart_screen.dart';
 import 'package:farm_fresh/screens/topupscreen.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ExploreProvider()),
+        ChangeNotifierProvider(create: (_) => ProductDetailProvider()),
+        ChangeNotifierProvider(create: (_) => ProfileProvider()),
+        ChangeNotifierProvider(create: (_) => PurchaseHistoryProvider()),
+        ChangeNotifierProvider(create: (_) => SignUpProvider()),
+        ChangeNotifierProvider(create: (_) => SignInProvider()),
+        ChangeNotifierProvider(create: (_) => SplashProvider()),
+        ChangeNotifierProvider(create: (_) => TopUpProvider()),
+        ChangeNotifierProvider(create: (_) => CartProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -47,7 +63,6 @@ class MyApp extends StatelessWidget {
         '/sign_up': (context) => const SignUpScreen(),
         '/balance': (context) => const BalanceScreen(),
         '/cart': (context) => const CartPage(),
-        '/balance_screen': (context) => const BalanceScreen(),
         '/splash_screen': (context) => const SplashScreen(),
         '/sign_in': (context) => const SignInScreen(),
         '/top_up': (context) => const TopUpScreen(),
