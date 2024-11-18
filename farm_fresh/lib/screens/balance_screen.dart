@@ -1,15 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 void main() {
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => BalanceProvider()),
-      ],
-      child: const MyApp(),
-    ),
-  );
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -18,7 +10,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Balance Screen with Provider',
+      title: 'Balance Screen Without State Management',
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
@@ -27,19 +19,21 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class BalanceProvider extends ChangeNotifier {
-  bool _balanceVisible = true;
+class BalanceScreen extends StatefulWidget {
+  const BalanceScreen({super.key});
 
-  bool get balanceVisible => _balanceVisible;
-
-  void toggleBalanceVisibility() {
-    _balanceVisible = !_balanceVisible;
-    notifyListeners();
-  }
+  @override
+  State<BalanceScreen> createState() => _BalanceScreenState();
 }
 
-class BalanceScreen extends StatelessWidget {
-  const BalanceScreen({super.key});
+class _BalanceScreenState extends State<BalanceScreen> {
+  bool _balanceVisible = true;
+
+  void _toggleBalanceVisibility() {
+    setState(() {
+      _balanceVisible = !_balanceVisible;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,45 +54,37 @@ class BalanceScreen extends StatelessWidget {
           children: [
             const SizedBox(height: 20),
             // Balance Card
-            Consumer<BalanceProvider>(
-              builder: (context, provider, child) {
-                return Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  padding: const EdgeInsets.all(20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(10),
+              ),
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text('Balance', style: TextStyle(color: Colors.grey)),
-                          const SizedBox(height: 5),
-                          Text(
-                            provider.balanceVisible ? 'RWF 100,000' : '******',
-                            style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                      IconButton(
-                        icon: Icon(
-                          provider.balanceVisible
-                              ? Icons.visibility
-                              : Icons.visibility_off,
+                      const Text('Balance', style: TextStyle(color: Colors.grey)),
+                      const SizedBox(height: 5),
+                      Text(
+                        _balanceVisible ? 'RWF 100,000' : '******',
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
                         ),
-                        onPressed: () {
-                          provider.toggleBalanceVisibility();
-                        },
                       ),
                     ],
                   ),
-                );
-              },
+                  IconButton(
+                    icon: Icon(
+                      _balanceVisible ? Icons.visibility : Icons.visibility_off,
+                    ),
+                    onPressed: _toggleBalanceVisibility,
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 20),
             // Top Up Button

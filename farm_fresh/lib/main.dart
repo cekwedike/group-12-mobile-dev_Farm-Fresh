@@ -25,7 +25,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => SignInProvider()),
         ChangeNotifierProvider(create: (_) => SplashProvider()),
         ChangeNotifierProvider(create: (_) => TopUpProvider()),
-        ChangeNotifierProvider(create: (_) => CartProvider()),
+        // ChangeNotifierProvider(create: (_) => CartProvider()), 
       ],
       child: const MyApp(),
     ),
