@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => SignInProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -10,12 +18,23 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Sign In',
+      title: 'Sign In Screen with Provider',
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
       home: const SignInScreen(),
     );
+  }
+}
+
+class SignInProvider extends ChangeNotifier {
+  bool _obscurePassword = true;
+
+  bool get obscurePassword => _obscurePassword;
+
+  void togglePasswordVisibility() {
+    _obscurePassword = !_obscurePassword;
+    notifyListeners();
   }
 }
 
@@ -57,21 +76,25 @@ class SignInScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16.0),
-            TextField(
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: 'Password',
-                border: const OutlineInputBorder(),
-                suffix: GestureDetector(
-                  onTap: () {
-                    // Handle forgot password
-                  },
-                  child: const Text(
-                    'Forgot password?',
-                    style: TextStyle(color: Colors.orange),
+            Consumer<SignInProvider>(
+              builder: (context, provider, child) {
+                return TextField(
+                  obscureText: provider.obscurePassword,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    border: const OutlineInputBorder(),
+                    suffix: GestureDetector(
+                      onTap: provider.togglePasswordVisibility,
+                      child: Text(
+                        provider.obscurePassword
+                            ? 'Show'
+                            : 'Hide',
+                        style: const TextStyle(color: Colors.orange),
+                      ),
+                    ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
             const SizedBox(height: 16.0),
             ElevatedButton(
@@ -90,7 +113,7 @@ class SignInScreen extends StatelessWidget {
             const Text("Don't have an account?"),
             TextButton(
               onPressed: () {
-                // Navigate to the Sign-In screen
+                // Navigate to the Sign-Up screen
                 Navigator.pushNamed(context, '/sign_up');
               },
               child: const Text(

@@ -1,4 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+void main() {
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ProfileProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Profile Screen with Provider',
+      theme: ThemeData(
+        primarySwatch: Colors.green,
+      ),
+      home: const ProfileScreen(),
+    );
+  }
+}
+
+class ProfileProvider extends ChangeNotifier {
+  bool _isLoggedIn = true;
+
+  bool get isLoggedIn => _isLoggedIn;
+
+  void logout() {
+    _isLoggedIn = false;
+    notifyListeners();
+  }
+}
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -101,21 +139,27 @@ class ProfileScreen extends StatelessWidget {
                   '/purchase_history'), // Navigate to Purchase History Screen
             ),
             const Spacer(),
-            ElevatedButton(
-              onPressed: () => Navigator.pushReplacementNamed(
-                  context, '/sign_in'), // Navigate back to Sign In Screen
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF4CAF50),
-                padding: const EdgeInsets.symmetric(vertical: 16),
-              ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.logout),
-                  SizedBox(width: 8),
-                  Text('Sign Out'),
-                ],
-              ),
+            Consumer<ProfileProvider>(
+              builder: (context, provider, child) {
+                return ElevatedButton(
+                  onPressed: () {
+                    provider.logout();
+                    Navigator.pushReplacementNamed(context, '/sign_in');
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF4CAF50),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.logout),
+                      SizedBox(width: 8),
+                      Text('Sign Out'),
+                    ],
+                  ),
+                );
+              },
             ),
             const SizedBox(height: 24),
             BottomNavigationBar(

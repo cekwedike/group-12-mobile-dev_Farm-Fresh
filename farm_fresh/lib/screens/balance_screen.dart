@@ -1,13 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class BalanceScreen extends StatefulWidget {
-  const BalanceScreen({super.key});
-  @override
-  State<BalanceScreen> createState() => _BalanceScreenState();
+void main() {
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => BalanceProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
-class _BalanceScreenState extends State<BalanceScreen> {
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Balance Screen with Provider',
+      theme: ThemeData(
+        primarySwatch: Colors.green,
+      ),
+      home: const BalanceScreen(),
+    );
+  }
+}
+
+class BalanceProvider extends ChangeNotifier {
   bool _balanceVisible = true;
+
+  bool get balanceVisible => _balanceVisible;
+
+  void toggleBalanceVisibility() {
+    _balanceVisible = !_balanceVisible;
+    notifyListeners();
+  }
+}
+
+class BalanceScreen extends StatelessWidget {
+  const BalanceScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -43,23 +75,31 @@ class _BalanceScreenState extends State<BalanceScreen> {
                       const Text('Balance',
                           style: TextStyle(color: Colors.grey)),
                       const SizedBox(height: 5),
-                      Text(
-                        _balanceVisible ? 'RWF 100,000' : '******',
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      Consumer<BalanceProvider>(
+                        builder: (context, provider, child) {
+                          return Text(
+                            provider.balanceVisible ? 'RWF 100,000' : '******',
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),
-                  IconButton(
-                    icon: Icon(
-                      _balanceVisible ? Icons.visibility : Icons.visibility_off,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _balanceVisible = !_balanceVisible;
-                      });
+                  Consumer<BalanceProvider>(
+                    builder: (context, provider, child) {
+                      return IconButton(
+                        icon: Icon(
+                          provider.balanceVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                        ),
+                        onPressed: () {
+                          provider.toggleBalanceVisibility();
+                        },
+                      );
                     },
                   ),
                 ],

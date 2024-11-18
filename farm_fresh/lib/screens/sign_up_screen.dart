@@ -1,15 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({super.key});
-
-  @override
-  _SignUpScreenState createState() => _SignUpScreenState();
+void main() {
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => SignUpProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Sign Up Screen with Provider',
+      theme: ThemeData(
+        primarySwatch: Colors.green,
+      ),
+      home: const SignUpScreen(),
+    );
+  }
+}
+
+class SignUpProvider extends ChangeNotifier {
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+
+  bool get obscurePassword => _obscurePassword;
+  bool get obscureConfirmPassword => _obscureConfirmPassword;
+
+  void togglePasswordVisibility() {
+    _obscurePassword = !_obscurePassword;
+    notifyListeners();
+  }
+
+  void toggleConfirmPasswordVisibility() {
+    _obscureConfirmPassword = !_obscureConfirmPassword;
+    notifyListeners();
+  }
+}
+
+class SignUpScreen extends StatelessWidget {
+  const SignUpScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -46,40 +83,44 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
             ),
             const SizedBox(height: 15),
-            TextField(
-              obscureText: _obscurePassword,
-              decoration: InputDecoration(
-                labelText: 'Password',
-                border: const OutlineInputBorder(),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _obscurePassword ? Icons.visibility_off : Icons.visibility,
+            Consumer<SignUpProvider>(
+              builder: (context, provider, child) {
+                return TextField(
+                  obscureText: provider.obscurePassword,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    border: const OutlineInputBorder(),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        provider.obscurePassword
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                      ),
+                      onPressed: provider.togglePasswordVisibility,
+                    ),
                   ),
-                  onPressed: () {
-                    setState(() {
-                      _obscurePassword = !_obscurePassword;
-                    });
-                  },
-                ),
-              ),
+                );
+              },
             ),
             const SizedBox(height: 15),
-            TextField(
-              obscureText: _obscureConfirmPassword,
-              decoration: InputDecoration(
-                labelText: 'Confirm your password',
-                border: const OutlineInputBorder(),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _obscureConfirmPassword ? Icons.visibility_off : Icons.visibility,
+            Consumer<SignUpProvider>(
+              builder: (context, provider, child) {
+                return TextField(
+                  obscureText: provider.obscureConfirmPassword,
+                  decoration: InputDecoration(
+                    labelText: 'Confirm your password',
+                    border: const OutlineInputBorder(),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        provider.obscureConfirmPassword
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                      ),
+                      onPressed: provider.toggleConfirmPasswordVisibility,
+                    ),
                   ),
-                  onPressed: () {
-                    setState(() {
-                      _obscureConfirmPassword = !_obscureConfirmPassword;
-                    });
-                  },
-                ),
-              ),
+                );
+              },
             ),
             const SizedBox(height: 20),
             ElevatedButton(

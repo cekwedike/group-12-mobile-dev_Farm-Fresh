@@ -1,5 +1,50 @@
-// explorescreen.dart
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+void main() {
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ExploreProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Explore Screen with Provider',
+      theme: ThemeData(
+        primarySwatch: Colors.green,
+      ),
+      home: const FarmFreshScreen(),
+    );
+  }
+}
+
+class ExploreProvider extends ChangeNotifier {
+  final List<String> _favorites = [];
+
+  List<String> get favorites => _favorites;
+
+  void toggleFavorite(String productName) {
+    if (_favorites.contains(productName)) {
+      _favorites.remove(productName);
+    } else {
+      _favorites.add(productName);
+    }
+    notifyListeners();
+  }
+
+  bool isFavorite(String productName) {
+    return _favorites.contains(productName);
+  }
+}
 
 class FarmFreshScreen extends StatelessWidget {
   const FarmFreshScreen({super.key});
@@ -29,21 +74,8 @@ class FarmFreshScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(50),
               ),
               child: IconButton(
-                icon: const Icon(Icons.favorite_border, 
-                  color: Color(0xFF1B8E3D),
-                  size: 22,
-                ),
-                onPressed: () {},
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.only(right: 16),
-              decoration: BoxDecoration(
-                color: const Color(0xFFE8F5E9),
-                borderRadius: BorderRadius.circular(50),
-              ),
-              child: IconButton(
-                icon: const Icon(Icons.filter_alt_outlined,
+                icon: const Icon(
+                  Icons.filter_alt_outlined,
                   color: Color(0xFF1B8E3D),
                   size: 22,
                 ),
@@ -73,57 +105,11 @@ class FarmFreshScreen extends StatelessWidget {
               crossAxisCount: 2,
               mainAxisSpacing: 16,
               crossAxisSpacing: 16,
-              childAspectRatio: 0.6,  // Adjusted aspect ratio
+              childAspectRatio: 0.6,
               children: List.generate(4, (index) => const ProductCard()),
             ),
           ),
         ],
-      ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          border: Border(
-            top: BorderSide(
-              color: Colors.grey.shade200,
-              width: 1,
-            ),
-          ),
-        ),
-        child: BottomNavigationBar(
-          elevation: 0,
-          backgroundColor: Colors.white,
-          selectedItemColor: const Color(0xFF1B8E3D),
-          unselectedItemColor: Colors.grey,
-          currentIndex: 0,
-          selectedFontSize: 12,
-          unselectedFontSize: 12,
-          type: BottomNavigationBarType.fixed,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_cart_outlined),
-              label: 'Cart',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline),
-              label: 'Profile',
-            ),
-          ],
-          onTap: (index) {
-            // Handle navigation
-            if (index == 0) {
-              Navigator.pushNamed(context, '/');
-            }
-            if (index == 1) {
-              Navigator.pushNamed(context, '/cart');
-            }
-            if (index == 2) {
-              Navigator.pushNamed(context, '/profile');
-            }
-          },
-        ),
       ),
     );
   }
@@ -173,17 +159,28 @@ class ProductCard extends StatelessWidget {
                   Positioned(
                     top: 8,
                     right: 8,
-                    child: Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFE8F5E9),
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      child: const Icon(
-                        Icons.favorite_border,
-                        color: Color(0xFF1B8E3D),
-                        size: 20,
-                      ),
+                    child: Consumer<ExploreProvider>(
+                      builder: (context, provider, child) {
+                        return GestureDetector(
+                          onTap: () {
+                            provider.toggleFavorite('Berries');
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFE8F5E9),
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                            child: Icon(
+                              provider.isFavorite('Berries')
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
+                              color: const Color(0xFF1B8E3D),
+                              size: 20,
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ],

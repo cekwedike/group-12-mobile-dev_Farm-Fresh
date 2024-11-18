@@ -1,4 +1,55 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+void main() {
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => PurchaseHistoryProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Purchase History with Provider',
+      theme: ThemeData(
+        primarySwatch: Colors.green,
+      ),
+      home: const PurchaseHistoryScreen(),
+    );
+  }
+}
+
+class PurchaseHistoryProvider extends ChangeNotifier {
+  final List<PurchaseItem> _purchaseHistory = [
+    PurchaseItem('17 August 2021', 'Strawberries', 15500, 'assets/berries.jpg'),
+    PurchaseItem('17 August 2021', 'Cranberries', 22800, 'assets/berries.jpg'),
+    PurchaseItem('17 August 2021', 'Raspberries', 18900, 'assets/berries.jpg'),
+    PurchaseItem('16 August 2021', 'Cranberries', 12500, 'assets/berries.jpg'),
+    PurchaseItem('15 August 2021', 'Raspberries', 27600, 'assets/berries.jpg'),
+    PurchaseItem('14 August 2021', 'Strawberries', 19800, 'assets/berries.jpg'),
+    PurchaseItem('13 August 2021', 'Raspberries', 23400, 'assets/berries.jpg'),
+    PurchaseItem('11 August 2021', 'Cranberries', 16700, 'assets/berries.jpg'),
+  ];
+
+  List<PurchaseItem> get purchaseHistory => _purchaseHistory;
+}
+
+class PurchaseItem {
+  final String date;
+  final String merchant;
+  final double amount;
+  final String iconPath;
+
+  PurchaseItem(this.date, this.merchant, this.amount, this.iconPath);
+}
 
 class PurchaseHistoryScreen extends StatelessWidget {
   const PurchaseHistoryScreen({super.key});
@@ -22,25 +73,16 @@ class PurchaseHistoryScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         elevation: 0,
       ),
-      body: ListView(
-        children: [
-          _buildPurchaseItem('17 August 2021', 'Strawberries', 15500,
-              'assets/berries.jpg'),
-          _buildPurchaseItem(
-              '17 August 2021', 'Cranberries', 22800, 'assets/berries.jpg'),
-          _buildPurchaseItem('17 August 2021', 'Raspberries', 18900,
-              'assets/berries.jpg'),
-          _buildPurchaseItem('16 August 2021', 'Cranberries', 12500,
-              'assets/berries.jpg'),
-          _buildPurchaseItem('15 August 2021', 'Raspberries', 27600,
-              'assets/berries.jpg'),
-          _buildPurchaseItem('14 August 2021', 'Strawberries', 19800,
-              'assets/berries.jpg'),
-          _buildPurchaseItem('13 August 2021', 'Raspberries', 23400,
-              'assets/berries.jpg'),
-          _buildPurchaseItem('11 August 2021', 'Cranberries', 16700,
-              'assets/berries.jpg'),
-        ],
+      body: Consumer<PurchaseHistoryProvider>(
+        builder: (context, provider, child) {
+          return ListView.builder(
+            itemCount: provider.purchaseHistory.length,
+            itemBuilder: (context, index) {
+              final item = provider.purchaseHistory[index];
+              return _buildPurchaseItem(item);
+            },
+          );
+        },
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 2,
@@ -74,13 +116,12 @@ class PurchaseHistoryScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPurchaseItem(
-      String date, String merchant, double amount, String iconPath) {
+  Widget _buildPurchaseItem(PurchaseItem item) {
     // Format the amount with thousand separators
-    String formattedAmount = amount.toStringAsFixed(0).replaceAllMapped(
-          RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-          (Match m) => '${m[1]},',
-        );
+    String formattedAmount = item.amount.toStringAsFixed(0).replaceAllMapped(
+      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+      (Match m) => '\${m[1]},',
+    );
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -89,7 +130,7 @@ class PurchaseHistoryScreen extends StatelessWidget {
           SizedBox(
             width: 120,
             child: Text(
-              date,
+              item.date,
               style: const TextStyle(
                 color: Colors.green,
                 fontSize: 14,
@@ -103,7 +144,7 @@ class PurchaseHistoryScreen extends StatelessWidget {
               color: Colors.grey[200],
               borderRadius: BorderRadius.circular(8),
               image: DecorationImage(
-                image: AssetImage(iconPath),
+                image: AssetImage(item.iconPath),
                 fit: BoxFit.cover,
               ),
             ),
@@ -114,7 +155,7 @@ class PurchaseHistoryScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  merchant,
+                  item.merchant,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w400,
