@@ -60,37 +60,32 @@ class BalanceScreen extends StatelessWidget {
           children: [
             const SizedBox(height: 20),
             // Balance Card
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(10),
-              ),
-              padding: const EdgeInsets.all(20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+            Consumer<BalanceProvider>(
+              builder: (context, provider, child) {
+                return Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding: const EdgeInsets.all(20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text('Balance',
-                          style: TextStyle(color: Colors.grey)),
-                      const SizedBox(height: 5),
-                      Consumer<BalanceProvider>(
-                        builder: (context, provider, child) {
-                          return Text(
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('Balance', style: TextStyle(color: Colors.grey)),
+                          const SizedBox(height: 5),
+                          Text(
                             provider.balanceVisible ? 'RWF 100,000' : '******',
                             style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
                             ),
-                          );
-                        },
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  Consumer<BalanceProvider>(
-                    builder: (context, provider, child) {
-                      return IconButton(
+                      IconButton(
                         icon: Icon(
                           provider.balanceVisible
                               ? Icons.visibility
@@ -99,11 +94,11 @@ class BalanceScreen extends StatelessWidget {
                         onPressed: () {
                           provider.toggleBalanceVisibility();
                         },
-                      );
-                    },
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                );
+              },
             ),
             const SizedBox(height: 20),
             // Top Up Button
