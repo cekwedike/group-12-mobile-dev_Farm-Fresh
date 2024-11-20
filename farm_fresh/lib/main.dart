@@ -1,19 +1,26 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:farm_fresh/screens/splash_screen.dart';
-import 'package:flutter/material.dart';
-import 'package:farm_fresh/screens/explorescreen.dart';
-import 'package:farm_fresh/screens/purchase_history_screen.dart';
-import 'package:farm_fresh/screens/details.dart';
-import 'package:farm_fresh/screens/profile.dart';
-import 'package:farm_fresh/screens/sign_up_screen.dart';
-import 'package:farm_fresh/screens/balance_screen.dart';
-import 'package:farm_fresh/screens/signin_screen.dart';
-import 'package:farm_fresh/screens/cart_screen.dart';
-import 'package:farm_fresh/screens/topupscreen.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+import 'screens/signin_screen.dart';
+import 'package:flutter/material.dart';
+import './screens/explorescreen.dart';
+import './screens/purchase_history_screen.dart';
+import './screens/details.dart';
+import './screens/profile.dart';
+import './screens/sign_up_screen.dart';
+import './screens/balance_screen.dart';
+import './screens/cart_screen.dart';
+import './screens/topupscreen.dart';
+
+void main()async {
+  WidgetsFlutterBinding.ensureInitialized();
+await Firebase.initializeApp(
+  options: DefaultFirebaseOptions.currentPlatform,
+);
   runApp(
     MultiProvider(
       providers: [
