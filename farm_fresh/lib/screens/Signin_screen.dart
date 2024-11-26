@@ -1,105 +1,75 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../screens/explorescreen.dart'; // Correct import for ExploreScreen
-
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(); // Initialize Firebase
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => SignInProvider()),
-      ],
-      child: const MyApp(),
-    ),
-  );
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Firebase Sign In',
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-      ),
-      home: StreamBuilder<User?>(
-        stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasData) {
-            return const FarmFreshScreen(); // Logged in
-          } else {
-            return const SignInScreen(); // Not logged in
-          }
-        },
-      ),
-      routes: {
-        '/explorescreen': (context) => const FarmFreshScreen(),
-      },
-    );
-  }
-}
 
 class SignInProvider extends ChangeNotifier {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-
   bool _obscurePassword = true;
+  bool _isLoading = false;
 
   bool get obscurePassword => _obscurePassword;
+  bool get isLoading => _isLoading;
 
   void togglePasswordVisibility() {
     _obscurePassword = !_obscurePassword;
     notifyListeners();
   }
 
+  void setLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
+
   Future<void> signInWithEmailAndPassword(
-      BuildContext context, String email, String password) async {
+    BuildContext context,
+    String email,
+    String password,
+  ) async {
+    if (email.isEmpty || password.isEmpty) {
+      throw 'Please fill in all fields';
+    }
+
     try {
+      setLoading(true);
+
       // Firebase sign-in logic
-      await _firebaseAuth.signInWithEmailAndPassword(
-        email: email,
+      final UserCredential userCredential = await _firebaseAuth.signInWithEmailAndPassword(
+        email: email.trim(),
         password: password,
       );
 
-      // Confirm that user is authenticated
-      final user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Successfully signed in!')),
-        );
-        // Navigate to ExploreScreen on success
-        Navigator.pushNamed(context, '/explorescreen');
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Authentication failed!')),
-        );
+      if (userCredential.user != null) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Successfully signed in!')),
+          );
+          // Navigate to ExploreScreen on success
+          Navigator.pushReplacementNamed(context, '/');
+        }
       }
     } on FirebaseAuthException catch (e) {
       String errorMessage;
       switch (e.code) {
         case 'user-not-found':
-          errorMessage = 'No user found for that email.';
+          errorMessage = 'No user found for that email';
           break;
         case 'wrong-password':
-          errorMessage = 'Incorrect password.';
+          errorMessage = 'Incorrect password';
+          break;
+        case 'invalid-email':
+          errorMessage = 'Please enter a valid email address';
+          break;
+        case 'user-disabled':
+          errorMessage = 'This account has been disabled';
           break;
         default:
-          errorMessage = 'An error occurred. Please try again.';
+          errorMessage = 'An error occurred during sign in';
       }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(errorMessage)),
-      );
+      throw errorMessage;
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An unexpected error occurred.')),
-      );
+      throw 'An unexpected error occurred';
+    } finally {
+      setLoading(false);
     }
   }
 }
@@ -117,90 +87,111 @@ class SignInScreen extends StatelessWidget {
         title: const Text('Sign In'),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'Sign In',
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8.0),
-            const Text(
-              'Enter your email and password',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
-              ),
-            ),
-            const SizedBox(height: 32.0),
-            TextField(
-              controller: emailController,
-              decoration: const InputDecoration(
-                labelText: 'Email',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 16.0),
-            Consumer<SignInProvider>(
-              builder: (context, provider, child) {
-                return TextField(
-                  controller: passwordController,
-                  obscureText: provider.obscurePassword,
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    border: const OutlineInputBorder(),
-                    suffix: GestureDetector(
-                      onTap: provider.togglePasswordVisibility,
-                      child: Text(
-                        provider.obscurePassword ? 'Show' : 'Hide',
-                        style: const TextStyle(color: Colors.orange),
+      body: Consumer<SignInProvider>(
+        builder: (context, provider, child) {
+          return Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Sign In',
+                      style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
+                    const SizedBox(height: 8.0),
+                    const Text(
+                      'Enter your email and password',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    const SizedBox(height: 32.0),
+                    TextField(
+                      controller: emailController,
+                      decoration: const InputDecoration(
+                        labelText: 'Email',
+                        border: OutlineInputBorder(),
+                      ),
+                      enabled: !provider.isLoading,
+                      keyboardType: TextInputType.emailAddress,
+                    ),
+                    const SizedBox(height: 16.0),
+                    TextField(
+                      controller: passwordController,
+                      obscureText: provider.obscurePassword,
+                      decoration: InputDecoration(
+                        labelText: 'Password',
+                        border: const OutlineInputBorder(),
+                        suffix: GestureDetector(
+                          onTap: provider.togglePasswordVisibility,
+                          child: Text(
+                            provider.obscurePassword ? 'Show' : 'Hide',
+                            style: const TextStyle(color: Colors.orange),
+                          ),
+                        ),
+                      ),
+                      enabled: !provider.isLoading,
+                    ),
+                    const SizedBox(height: 16.0),
+                    ElevatedButton(
+                      onPressed: provider.isLoading
+                          ? null
+                          : () async {
+                              try {
+                                await provider.signInWithEmailAndPassword(
+                                  context,
+                                  emailController.text,
+                                  passwordController.text,
+                                );
+                              } catch (e) {
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text(e.toString())),
+                                  );
+                                }
+                              }
+                            },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 80,
+                          vertical: 15,
+                        ),
+                      ),
+                      child: Text(provider.isLoading ? 'SIGNING IN...' : 'LOGIN'),
+                    ),
+                    const SizedBox(height: 16.0),
+                    const Text("Don't have an account?"),
+                    TextButton(
+                      onPressed: provider.isLoading
+                          ? null
+                          : () {
+                              Navigator.pushReplacementNamed(context, '/sign_up');
+                            },
+                      child: const Text(
+                        'Sign Up',
+                        style: TextStyle(color: Colors.orange),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (provider.isLoading)
+                const Positioned.fill(
+                  child: Center(
+                    child: CircularProgressIndicator(),
                   ),
-                );
-              },
-            ),
-            const SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: () {
-                final email = emailController.text.trim();
-                final password = passwordController.text;
-
-                if (email.isNotEmpty && password.isNotEmpty) {
-                  Provider.of<SignInProvider>(context, listen: false)
-                      .signInWithEmailAndPassword(context, email, password);
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Please fill in all fields')),
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                foregroundColor: Colors.black,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
-              ),
-              child: const Text('LOGIN'),
-            ),
-            const SizedBox(height: 16.0),
-            const Text("Don't have an account?"),
-            TextButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/explorescreen');
-              },
-              child: const Text(
-                'Explore Screen',
-                style: TextStyle(color: Colors.orange),
-              ),
-            ),
-          ],
-        ),
+                ),
+            ],
+          );
+        },
       ),
     );
   }
