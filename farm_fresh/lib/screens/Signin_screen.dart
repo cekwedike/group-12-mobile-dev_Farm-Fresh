@@ -51,23 +51,19 @@ class SignInProvider extends ChangeNotifier {
       String errorMessage;
       switch (e.code) {
         case 'user-not-found':
-          errorMessage = 'No user found for that email';
-          break;
         case 'wrong-password':
-          errorMessage = 'Incorrect password';
-          break;
         case 'invalid-email':
-          errorMessage = 'Please enter a valid email address';
+          errorMessage = 'Wrong email/username. Try again';
           break;
         case 'user-disabled':
           errorMessage = 'This account has been disabled';
           break;
         default:
-          errorMessage = 'An error occurred during sign in';
+          errorMessage = 'Wrong email/username. Try again';
       }
       throw errorMessage;
     } catch (e) {
-      throw 'An unexpected error occurred';
+      throw 'Wrong email/username. Try again';
     } finally {
       setLoading(false);
     }
@@ -83,6 +79,7 @@ class SignInScreen extends StatelessWidget {
     final passwordController = TextEditingController();
 
     return Scaffold(
+      resizeToAvoidBottomInset: false, // Prevents keyboard overflow
       appBar: AppBar(
         title: const Text('Sign In'),
         centerTitle: true,
@@ -91,96 +88,103 @@ class SignInScreen extends StatelessWidget {
         builder: (context, provider, child) {
           return Stack(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'Sign In',
-                      style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
+              SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 60), // Added top padding
+                      const Text(
+                        'Sign In',
+                        style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 8.0),
-                    const Text(
-                      'Enter your email and password',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
+                      const SizedBox(height: 8.0),
+                      const Text(
+                        'Enter your email and password',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 32.0),
-                    TextField(
-                      controller: emailController,
-                      decoration: const InputDecoration(
-                        labelText: 'Email',
-                        border: OutlineInputBorder(),
+                      const SizedBox(height: 32.0),
+                      TextField(
+                        controller: emailController,
+                        decoration: const InputDecoration(
+                          labelText: 'Email',
+                          border: OutlineInputBorder(),
+                        ),
+                        enabled: !provider.isLoading,
+                        keyboardType: TextInputType.emailAddress,
                       ),
-                      enabled: !provider.isLoading,
-                      keyboardType: TextInputType.emailAddress,
-                    ),
-                    const SizedBox(height: 16.0),
-                    TextField(
-                      controller: passwordController,
-                      obscureText: provider.obscurePassword,
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        border: const OutlineInputBorder(),
-                        suffix: GestureDetector(
-                          onTap: provider.togglePasswordVisibility,
-                          child: Text(
-                            provider.obscurePassword ? 'Show' : 'Hide',
-                            style: const TextStyle(color: Colors.orange),
+                      const SizedBox(height: 16.0),
+                      TextField(
+                        controller: passwordController,
+                        obscureText: provider.obscurePassword,
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          border: const OutlineInputBorder(),
+                          suffix: GestureDetector(
+                            onTap: provider.togglePasswordVisibility,
+                            child: Text(
+                              provider.obscurePassword ? 'Show' : 'Hide',
+                              style: const TextStyle(color: Colors.orange),
+                            ),
                           ),
                         ),
+                        enabled: !provider.isLoading,
                       ),
-                      enabled: !provider.isLoading,
-                    ),
-                    const SizedBox(height: 16.0),
-                    ElevatedButton(
-                      onPressed: provider.isLoading
-                          ? null
-                          : () async {
-                              try {
-                                await provider.signInWithEmailAndPassword(
-                                  context,
-                                  emailController.text,
-                                  passwordController.text,
-                                );
-                              } catch (e) {
-                                if (context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(e.toString())),
+                      const SizedBox(height: 16.0),
+                      ElevatedButton(
+                        onPressed: provider.isLoading
+                            ? null
+                            : () async {
+                                try {
+                                  await provider.signInWithEmailAndPassword(
+                                    context,
+                                    emailController.text,
+                                    passwordController.text,
                                   );
+                                } catch (e) {
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(e.toString()),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                  }
                                 }
-                              }
-                            },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 80,
-                          vertical: 15,
+                              },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 80,
+                            vertical: 15,
+                          ),
+                        ),
+                        child: Text(provider.isLoading ? 'SIGNING IN...' : 'LOGIN'),
+                      ),
+                      const SizedBox(height: 16.0),
+                      const Text("Don't have an account?"),
+                      TextButton(
+                        onPressed: provider.isLoading
+                            ? null
+                            : () {
+                                Navigator.pushReplacementNamed(context, '/sign_up');
+                              },
+                        child: const Text(
+                          'Sign Up',
+                          style: TextStyle(color: Colors.orange),
                         ),
                       ),
-                      child: Text(provider.isLoading ? 'SIGNING IN...' : 'LOGIN'),
-                    ),
-                    const SizedBox(height: 16.0),
-                    const Text("Don't have an account?"),
-                    TextButton(
-                      onPressed: provider.isLoading
-                          ? null
-                          : () {
-                              Navigator.pushReplacementNamed(context, '/sign_up');
-                            },
-                      child: const Text(
-                        'Sign Up',
-                        style: TextStyle(color: Colors.orange),
-                      ),
-                    ),
-                  ],
+                      const SizedBox(height: 20), // Added bottom padding
+                    ],
+                  ),
                 ),
               ),
               if (provider.isLoading)

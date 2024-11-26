@@ -111,138 +111,134 @@ class SignUpScreen extends StatelessWidget {
     final TextEditingController confirmPasswordController = TextEditingController();
 
     return Scaffold(
+      resizeToAvoidBottomInset: false, // Prevents keyboard overflow
       body: Consumer<SignUpProvider>(
         builder: (context, provider, child) {
           return Stack(
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'Sign Up',
-                      style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 10),
-                    const Text(
-                      'First create your account',
-                      style: TextStyle(color: Colors.grey),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 30),
-                    TextField(
-                      controller: fullNameController,
-                      decoration: const InputDecoration(
-                        labelText: 'Full name',
-                        border: OutlineInputBorder(),
+              SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 100), // Added top padding
+                      const Text(
+                        'Sign Up',
+                        style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center,
                       ),
-                      enabled: !provider.isLoading,
-                    ),
-                    const SizedBox(height: 15),
-                    TextField(
-                      controller: emailController,
-                      decoration: const InputDecoration(
-                        labelText: 'Email',
-                        border: OutlineInputBorder(),
+                      const SizedBox(height: 10),
+                      const Text(
+                        'First create your account',
+                        style: TextStyle(color: Colors.grey),
+                        textAlign: TextAlign.center,
                       ),
-                      enabled: !provider.isLoading,
-                    ),
-                    const SizedBox(height: 15),
-                    TextField(
-                      controller: passwordController,
-                      obscureText: provider.obscurePassword,
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        border: const OutlineInputBorder(),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            provider.obscurePassword
-                                ? Icons.visibility_off
-                                : Icons.visibility,
-                          ),
-                          onPressed: provider.togglePasswordVisibility,
+                      const SizedBox(height: 30),
+                      TextField(
+                        controller: fullNameController,
+                        decoration: const InputDecoration(
+                          labelText: 'Full name',
+                          border: OutlineInputBorder(),
                         ),
+                        enabled: !provider.isLoading,
                       ),
-                      enabled: !provider.isLoading,
-                    ),
-                    const SizedBox(height: 15),
-                    TextField(
-                      controller: confirmPasswordController,
-                      obscureText: provider.obscureConfirmPassword,
-                      decoration: InputDecoration(
-                        labelText: 'Confirm your password',
-                        border: const OutlineInputBorder(),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            provider.obscureConfirmPassword
-                                ? Icons.visibility_off
-                                : Icons.visibility,
-                          ),
-                          onPressed: provider.toggleConfirmPasswordVisibility,
+                      const SizedBox(height: 15),
+                      TextField(
+                        controller: emailController,
+                        decoration: const InputDecoration(
+                          labelText: 'Email',
+                          border: OutlineInputBorder(),
                         ),
+                        enabled: !provider.isLoading,
                       ),
-                      enabled: !provider.isLoading,
-                    ),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        padding: const EdgeInsets.symmetric(vertical: 15),
-                      ),
-                      onPressed: provider.isLoading
-                          ? null
-                          : () async {
-                              try {
-                                await provider.signUp(
-                                  context,
-                                  email: emailController.text,
-                                  password: passwordController.text,
-                                  confirmPassword: confirmPasswordController.text,
-                                  fullName: fullNameController.text,
-                                );
-                              } catch (e) {
-                                if (context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(e.toString())),
-                                  );
-                                }
-                              }
-                            },
-                      child: Text(provider.isLoading ? 'SIGNING UP...' : 'SIGN UP'),
-                    ),
-                    const SizedBox(height: 10),
-                    Center(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text('Already have an account?'),
-                          TextButton(
-                            onPressed: provider.isLoading
-                                ? null
-                                : () {
-                                    Navigator.pushReplacementNamed(context, '/sign_in');
-                                  },
-                            child: const Text(
-                              'Login',
-                              style: TextStyle(color: Colors.orange),
+                      const SizedBox(height: 15),
+                      TextField(
+                        controller: passwordController,
+                        obscureText: provider.obscurePassword,
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          border: const OutlineInputBorder(),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              provider.obscurePassword
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
                             ),
+                            onPressed: provider.togglePasswordVisibility,
                           ),
-                        ],
+                        ),
+                        enabled: !provider.isLoading,
                       ),
-                    ),
-                    if (!provider.isLoading)
+                      const SizedBox(height: 15),
+                      TextField(
+                        controller: confirmPasswordController,
+                        obscureText: provider.obscureConfirmPassword,
+                        decoration: InputDecoration(
+                          labelText: 'Confirm your password',
+                          border: const OutlineInputBorder(),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              provider.obscureConfirmPassword
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                            ),
+                            onPressed: provider.toggleConfirmPasswordVisibility,
+                          ),
+                        ),
+                        enabled: !provider.isLoading,
+                      ),
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                        ),
+                        onPressed: provider.isLoading
+                            ? null
+                            : () async {
+                                try {
+                                  await provider.signUp(
+                                    context,
+                                    email: emailController.text,
+                                    password: passwordController.text,
+                                    confirmPassword: confirmPasswordController.text,
+                                    fullName: fullNameController.text,
+                                  );
+                                } catch (e) {
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text(e.toString())),
+                                    );
+                                  }
+                                }
+                              },
+                        child: Text(provider.isLoading ? 'SIGNING UP...' : 'SIGN UP'),
+                      ),
+                      const SizedBox(height: 10),
                       Center(
-                        child: TextButton(
-                          onPressed: () {
-                            Navigator.pushReplacementNamed(context, '/');
-                          },
-                          child: const Text('Skip now -->'),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text('Already have an account?'),
+                            TextButton(
+                              onPressed: provider.isLoading
+                                  ? null
+                                  : () {
+                                      Navigator.pushReplacementNamed(context, '/sign_in');
+                                    },
+                              child: const Text(
+                                'Login',
+                                style: TextStyle(color: Colors.orange),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                  ],
+                      const SizedBox(height: 20), // Added bottom padding
+                    ],
+                  ),
                 ),
               ),
               if (provider.isLoading)
