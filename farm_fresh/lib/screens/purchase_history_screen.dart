@@ -120,7 +120,7 @@ class PurchaseHistoryScreen extends StatelessWidget {
     // Format the amount with thousand separators
     String formattedAmount = item.amount.toStringAsFixed(0).replaceAllMapped(
       RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-      (Match m) => '\${m[1]},',
+      (Match m) => '${m[1]},',
     );
 
     return Container(
