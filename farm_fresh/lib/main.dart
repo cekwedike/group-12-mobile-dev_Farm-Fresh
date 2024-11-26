@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
-import 'screens/signin_screen.dart';
+import './screens/Signin_screen.dart';
 import 'package:flutter/material.dart';
 import './screens/explorescreen.dart';
 import './screens/purchase_history_screen.dart';
@@ -16,11 +16,11 @@ import './screens/balance_screen.dart';
 import './screens/cart_screen.dart';
 import './screens/topupscreen.dart';
 
-void main()async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-await Firebase.initializeApp(
-  options: DefaultFirebaseOptions.currentPlatform,
-);
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(
     MultiProvider(
       providers: [
@@ -32,7 +32,7 @@ await Firebase.initializeApp(
         ChangeNotifierProvider(create: (_) => SignInProvider()),
         ChangeNotifierProvider(create: (_) => SplashProvider()),
         ChangeNotifierProvider(create: (_) => TopUpProvider()),
-        // ChangeNotifierProvider(create: (_) => CartProvider()), 
+        // ChangeNotifierProvider(create: (_) => CartProvider()),
       ],
       child: const MyApp(),
     ),
@@ -91,7 +91,7 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     // Generate a random delay between 8 to 12 seconds
     final int randomSeconds = Random().nextInt(5) + 8;
-    
+
     Timer(Duration(seconds: randomSeconds), () {
       Navigator.pushReplacementNamed(context, '/sign_up');
     });

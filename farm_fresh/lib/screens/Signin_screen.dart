@@ -1,8 +1,12 @@
-import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../screens/explorescreen.dart'; // Correct import for ExploreScreen
 
-
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(); // Initialize Firebase
   runApp(
     MultiProvider(
       providers: [
@@ -19,16 +23,33 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Sign In Screen with Provider',
+      title: 'Firebase Sign In',
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: const SignInScreen(),
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasData) {
+            return const FarmFreshScreen(); // Logged in
+          } else {
+            return const SignInScreen(); // Not logged in
+          }
+        },
+      ),
+      routes: {
+        '/explorescreen': (context) => const FarmFreshScreen(),
+      },
     );
   }
 }
 
 class SignInProvider extends ChangeNotifier {
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
   bool _obscurePassword = true;
 
   bool get obscurePassword => _obscurePassword;
@@ -37,6 +58,50 @@ class SignInProvider extends ChangeNotifier {
     _obscurePassword = !_obscurePassword;
     notifyListeners();
   }
+
+  Future<void> signInWithEmailAndPassword(
+      BuildContext context, String email, String password) async {
+    try {
+      // Firebase sign-in logic
+      await _firebaseAuth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      // Confirm that user is authenticated
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Successfully signed in!')),
+        );
+        // Navigate to ExploreScreen on success
+        Navigator.pushNamed(context, '/explorescreen');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Authentication failed!')),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      String errorMessage;
+      switch (e.code) {
+        case 'user-not-found':
+          errorMessage = 'No user found for that email.';
+          break;
+        case 'wrong-password':
+          errorMessage = 'Incorrect password.';
+          break;
+        default:
+          errorMessage = 'An error occurred. Please try again.';
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(errorMessage)),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An unexpected error occurred.')),
+      );
+    }
+  }
 }
 
 class SignInScreen extends StatelessWidget {
@@ -44,6 +109,9 @@ class SignInScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final emailController = TextEditingController();
+    final passwordController = TextEditingController();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Sign In'),
@@ -57,7 +125,7 @@ class SignInScreen extends StatelessWidget {
             const Text(
               'Sign In',
               style: TextStyle(
-                fontSize: 32, // Increased font size for title
+                fontSize: 32,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -65,13 +133,14 @@ class SignInScreen extends StatelessWidget {
             const Text(
               'Enter your email and password',
               style: TextStyle(
-                fontSize: 14, // Smaller font size for subtitle
+                fontSize: 14,
                 color: Colors.grey,
               ),
             ),
             const SizedBox(height: 32.0),
-            const TextField(
-              decoration: InputDecoration(
+            TextField(
+              controller: emailController,
+              decoration: const InputDecoration(
                 labelText: 'Email',
                 border: OutlineInputBorder(),
               ),
@@ -80,6 +149,7 @@ class SignInScreen extends StatelessWidget {
             Consumer<SignInProvider>(
               builder: (context, provider, child) {
                 return TextField(
+                  controller: passwordController,
                   obscureText: provider.obscurePassword,
                   decoration: InputDecoration(
                     labelText: 'Password',
@@ -87,9 +157,7 @@ class SignInScreen extends StatelessWidget {
                     suffix: GestureDetector(
                       onTap: provider.togglePasswordVisibility,
                       child: Text(
-                        provider.obscurePassword
-                            ? 'Show'
-                            : 'Hide',
+                        provider.obscurePassword ? 'Show' : 'Hide',
                         style: const TextStyle(color: Colors.orange),
                       ),
                     ),
@@ -100,11 +168,21 @@ class SignInScreen extends StatelessWidget {
             const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () {
-                // Handle login
+                final email = emailController.text.trim();
+                final password = passwordController.text;
+
+                if (email.isNotEmpty && password.isNotEmpty) {
+                  Provider.of<SignInProvider>(context, listen: false)
+                      .signInWithEmailAndPassword(context, email, password);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Please fill in all fields')),
+                  );
+                }
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green, // Keep the button green
-                foregroundColor: Colors.black, // Change font color to black
+                backgroundColor: Colors.green,
+                foregroundColor: Colors.black,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
               ),
@@ -114,44 +192,12 @@ class SignInScreen extends StatelessWidget {
             const Text("Don't have an account?"),
             TextButton(
               onPressed: () {
-                // Navigate to the Sign-Up screen
-                Navigator.pushNamed(context, '/sign_up');
+                Navigator.pushNamed(context, '/explorescreen');
               },
               child: const Text(
-                'Sign Up',
+                'Explore Screen',
                 style: TextStyle(color: Colors.orange),
               ),
-            ),
-            const SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: () {
-                // Handle Google sign in
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
-              ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Sign In with Google',
-                    style: TextStyle(
-                      color: Colors.black,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16.0),
-            TextButton(
-              onPressed: () {
-                // Handle skip action
-                Navigator.pushReplacementNamed(context, '/');
-              },
-              style: TextButton.styleFrom(),
-              child: const Text('Skip now -->'),
             ),
           ],
         ),
