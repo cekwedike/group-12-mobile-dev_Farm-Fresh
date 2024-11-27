@@ -1,131 +1,105 @@
+import 'dart:async';
+import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-void main() {
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => SplashProvider()),
-      ],
-      child: const MyApp(),
-    ),
-  );
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Splash Screen with Provider',
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-      ),
-      home: const SplashScreen(),
-    );
-  }
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class SplashProvider extends ChangeNotifier {
-  bool _isLoading = true;
+class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
 
-  bool get isLoading => _isLoading;
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    )..repeat();
 
-  void finishLoading() {
-    _isLoading = false;
-    notifyListeners();
+    // Navigation timer
+    Timer(const Duration(seconds: 3), () {
+      if (FirebaseAuth.instance.currentUser != null) {
+        Navigator.pushReplacementNamed(context, '/explore');
+      } else {
+        Navigator.pushReplacementNamed(context, '/sign_in');
+      }
+    });
   }
-}
 
-class SplashScreen extends StatelessWidget {
-  const SplashScreen({super.key});
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.green,
+      backgroundColor: const Color(0xFF1B8E3D), // The green color from your image
       body: Center(
-        child: Consumer<SplashProvider>(
-          builder: (context, provider, child) {
-            return Stack(
-              alignment: Alignment.center,
-              children: [
-                // Main large logo with shadow
-                Container(
-                  width: 80,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.transparent,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.green.withOpacity(0.5),
-                        blurRadius: 10.0,
-                        spreadRadius: 5.0,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            // Rotating small circles
+            AnimatedBuilder(
+              animation: _controller,
+              builder: (_, child) {
+                return Transform.rotate(
+                  angle: _controller.value * 2 * pi,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      // First rotating circle
+                      Positioned(
+                        top: -20,
+                        child: Container(
+                          width: 15,
+                          height: 15,
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ),
+                      // Second rotating circle
+                      Positioned(
+                        bottom: -20,
+                        child: Container(
+                          width: 15,
+                          height: 15,
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
                       ),
                     ],
                   ),
-                  child: ClipOval(
-                    child: Image.asset(
-                      'assets/logo.jpg',
-                      fit: BoxFit.cover,
-                    ),
-                  ),
+                );
+              },
+            ),
+            // Center fixed circle with loading indicator
+            Container(
+              width: 50,
+              height: 50,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+              child: const Center(
+                child: Icon(
+                  Icons.wb_sunny_outlined,
+                  color: Color(0xFF1B8E3D),
+                  size: 30,
                 ),
-                // Top logo with shadow
-                Positioned(
-                  bottom: 60,
-                  child: Container(
-                    width: 30,
-                    height: 30,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.transparent,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.green.withOpacity(0.5),
-                          blurRadius: 5.0,
-                          spreadRadius: 2.0,
-                        ),
-                      ],
-                    ),
-                    child: ClipOval(
-                      child: Image.asset(
-                        'assets/logo.jpg',
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                ),
-                // Bottom logo with shadow
-                Positioned(
-                  top: 60,
-                  child: Container(
-                    width: 30,
-                    height: 30,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.transparent,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.green.withOpacity(0.5),
-                          blurRadius: 5.0,
-                          spreadRadius: 2.0,
-                        ),
-                      ],
-                    ),
-                    child: ClipOval(
-                      child: Image.asset(
-                        'assets/logo.jpg',
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            );
-          },
+              ),
+            ),
+          ],
         ),
       ),
     );
