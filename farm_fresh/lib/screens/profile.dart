@@ -9,14 +9,12 @@ class ProfileProvider extends ChangeNotifier {
   bool _isEditing = false;
   bool _isLoading = false;
 
-  // User data
   String _fullName = '';
   String _email = '';
   String _phoneNumber = '';
   String _address = '';
   String _deliveryAddress = '';
 
-  // Getters
   bool get isEditing => _isEditing;
   bool get isLoading => _isLoading;
   String get fullName => _fullName;
@@ -25,7 +23,6 @@ class ProfileProvider extends ChangeNotifier {
   String get address => _address;
   String get deliveryAddress => _deliveryAddress;
 
-  // Initialize profile data
   Future<void> initializeProfile() async {
     _isLoading = true;
     notifyListeners();
@@ -35,7 +32,6 @@ class ProfileProvider extends ChangeNotifier {
       if (user != null) {
         _email = user.email ?? '';
         
-        // Get additional user data from Firestore
         final userData = await _firestore.collection('users').doc(user.uid).get();
         
         if (userData.exists) {
@@ -45,7 +41,6 @@ class ProfileProvider extends ChangeNotifier {
           _address = data['address'] ?? '';
           _deliveryAddress = data['deliveryAddress'] ?? '';
         } else {
-          // If no Firestore data exists, use data from Firebase Auth
           _fullName = user.displayName ?? '';
         }
       }
@@ -57,13 +52,11 @@ class ProfileProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Toggle edit mode
   void toggleEdit() {
     _isEditing = !_isEditing;
     notifyListeners();
   }
 
-  // Update user data
   Future<void> updateProfile({
     required String fullName,
     required String phoneNumber,
@@ -76,10 +69,8 @@ class ProfileProvider extends ChangeNotifier {
     try {
       final user = _auth.currentUser;
       if (user != null) {
-        // Update display name in Firebase Auth
         await user.updateDisplayName(fullName);
 
-        // Update data in Firestore
         await _firestore.collection('users').doc(user.uid).set({
           'fullName': fullName,
           'email': user.email,
@@ -89,7 +80,6 @@ class ProfileProvider extends ChangeNotifier {
           'updatedAt': FieldValue.serverTimestamp(),
         }, SetOptions(merge: true));
 
-        // Update local state
         _fullName = fullName;
         _phoneNumber = phoneNumber;
         _address = address;
@@ -105,7 +95,6 @@ class ProfileProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Sign out
   Future<void> signOut() async {
     await _auth.signOut();
   }
@@ -135,7 +124,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _addressController = TextEditingController();
     _deliveryAddressController = TextEditingController();
 
-    // Initialize profile data
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ProfileProvider>().initializeProfile().then((_) {
         final provider = context.read<ProfileProvider>();
@@ -156,6 +144,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _addressController.dispose();
     _deliveryAddressController.dispose();
     super.dispose();
+  }
+
+  Widget _buildOptionTile({
+    required String title,
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      leading: Icon(icon, color: const Color(0xFF1B8E3D)),
+      title: Text(title),
+      trailing: const Icon(Icons.chevron_right, color: Colors.grey),
+      onTap: onTap,
+    );
   }
 
   @override
@@ -238,6 +239,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                     const SizedBox(height: 24),
+
+                    // Options Section
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey.shade200),
+                      ),
+                      child: Column(
+                        children: [
+                          _buildOptionTile(
+                            title: 'Balance',
+                            icon: Icons.account_balance_wallet_outlined,
+                            onTap: () => Navigator.pushNamed(context, '/balance'),
+                          ),
+                          const Divider(height: 1),
+                          _buildOptionTile(
+                            title: 'Purchase History',
+                            icon: Icons.history,
+                            onTap: () => Navigator.pushNamed(context, '/purchase_history'),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
                     Form(
                       key: _formKey,
                       child: Column(
@@ -269,7 +296,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           const SizedBox(height: 16),
                           TextFormField(
                             controller: _emailController,
-                            enabled: false, // Email cannot be edited
+                            enabled: false,
                             decoration: const InputDecoration(
                               labelText: 'Email',
                               border: OutlineInputBorder(),
