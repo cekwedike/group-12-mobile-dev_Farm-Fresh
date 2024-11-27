@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-// ignore: unused_import
-import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 
 class SignUpProvider extends ChangeNotifier {
@@ -33,9 +32,12 @@ class SignUpProvider extends ChangeNotifier {
     required String password,
     required String confirmPassword,
     required String fullName,
+    String phoneNumber = '',
+    String address = '',
+    String deliveryAddress = '',
   }) async {
     if (email.isEmpty || password.isEmpty || confirmPassword.isEmpty || fullName.isEmpty) {
-      throw 'Please fill all fields';
+      throw 'Please fill all required fields';
     }
 
     if (password != confirmPassword) {
@@ -60,13 +62,27 @@ class SignUpProvider extends ChangeNotifier {
       );
 
       if (userCredential.user != null) {
-        // Update the user's display name
+        // Update the user's display name in Firebase Auth
         await userCredential.user!.updateDisplayName(fullName);
+
+        // Create user document in Firestore
+        await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).set({
+          'fullName': fullName,
+          'email': email.trim(),
+          'phoneNumber': phoneNumber,
+          'address': address,
+          'deliveryAddress': deliveryAddress,
+          'createdAt': FieldValue.serverTimestamp(),
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
         
         // Show success message
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Account created successfully")),
+            const SnackBar(
+              content: Text("Account created successfully"),
+              backgroundColor: Colors.green,
+            ),
           );
           
           // Navigate to sign in screen
@@ -109,9 +125,11 @@ class SignUpScreen extends StatelessWidget {
     final TextEditingController emailController = TextEditingController();
     final TextEditingController passwordController = TextEditingController();
     final TextEditingController confirmPasswordController = TextEditingController();
+    final TextEditingController phoneController = TextEditingController();
+    final TextEditingController addressController = TextEditingController();
 
     return Scaffold(
-      resizeToAvoidBottomInset: false, // Prevents keyboard overflow
+      resizeToAvoidBottomInset: false,
       body: Consumer<SignUpProvider>(
         builder: (context, provider, child) {
           return Stack(
@@ -121,9 +139,8 @@ class SignUpScreen extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const SizedBox(height: 100), // Added top padding
+                      const SizedBox(height: 100),
                       const Text(
                         'Sign Up',
                         style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
@@ -136,30 +153,56 @@ class SignUpScreen extends StatelessWidget {
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 30),
-                      TextField(
+                      TextFormField(
                         controller: fullNameController,
                         decoration: const InputDecoration(
-                          labelText: 'Full name',
+                          labelText: 'Full Name',
                           border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.person_outline),
                         ),
                         enabled: !provider.isLoading,
                       ),
                       const SizedBox(height: 15),
-                      TextField(
+                      TextFormField(
                         controller: emailController,
                         decoration: const InputDecoration(
                           labelText: 'Email',
                           border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.email_outlined),
                         ),
                         enabled: !provider.isLoading,
+                        keyboardType: TextInputType.emailAddress,
                       ),
                       const SizedBox(height: 15),
-                      TextField(
+                      TextFormField(
+                        controller: phoneController,
+                        decoration: const InputDecoration(
+                          labelText: 'Phone Number (Optional)',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.phone_outlined),
+                        ),
+                        enabled: !provider.isLoading,
+                        keyboardType: TextInputType.phone,
+                      ),
+                      const SizedBox(height: 15),
+                      TextFormField(
+                        controller: addressController,
+                        decoration: const InputDecoration(
+                          labelText: 'Address (Optional)',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.home_outlined),
+                        ),
+                        enabled: !provider.isLoading,
+                        maxLines: 2,
+                      ),
+                      const SizedBox(height: 15),
+                      TextFormField(
                         controller: passwordController,
                         obscureText: provider.obscurePassword,
                         decoration: InputDecoration(
                           labelText: 'Password',
                           border: const OutlineInputBorder(),
+                          prefixIcon: const Icon(Icons.lock_outline),
                           suffixIcon: IconButton(
                             icon: Icon(
                               provider.obscurePassword
@@ -172,12 +215,13 @@ class SignUpScreen extends StatelessWidget {
                         enabled: !provider.isLoading,
                       ),
                       const SizedBox(height: 15),
-                      TextField(
+                      TextFormField(
                         controller: confirmPasswordController,
                         obscureText: provider.obscureConfirmPassword,
                         decoration: InputDecoration(
-                          labelText: 'Confirm your password',
+                          labelText: 'Confirm Password',
                           border: const OutlineInputBorder(),
+                          prefixIcon: const Icon(Icons.lock_outline),
                           suffixIcon: IconButton(
                             icon: Icon(
                               provider.obscureConfirmPassword
@@ -205,11 +249,16 @@ class SignUpScreen extends StatelessWidget {
                                     password: passwordController.text,
                                     confirmPassword: confirmPasswordController.text,
                                     fullName: fullNameController.text,
+                                    phoneNumber: phoneController.text,
+                                    address: addressController.text,
                                   );
                                 } catch (e) {
                                   if (context.mounted) {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text(e.toString())),
+                                      SnackBar(
+                                        content: Text(e.toString()),
+                                        backgroundColor: Colors.red,
+                                      ),
                                     );
                                   }
                                 }
@@ -236,7 +285,7 @@ class SignUpScreen extends StatelessWidget {
                           ],
                         ),
                       ),
-                      const SizedBox(height: 20), // Added bottom padding
+                      const SizedBox(height: 20),
                     ],
                   ),
                 ),

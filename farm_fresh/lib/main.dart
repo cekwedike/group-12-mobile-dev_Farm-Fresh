@@ -1,21 +1,21 @@
 import 'dart:async';
 import 'dart:math';
-import 'package:farm_fresh/screens/splash_screen.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
 
 import './screens/Signin_screen.dart';
-import 'package:flutter/material.dart';
 import './screens/explorescreen.dart';
 import './screens/purchase_history_screen.dart';
 import './screens/details.dart';
 import './screens/profile.dart';
 import './screens/sign_up_screen.dart';
 import './screens/balance_screen.dart';
-import './screens/cart_screen.dart' as cart_screen;
+import './screens/cart_screen.dart';
 import './screens/topupscreen.dart';
-import './screens/cart_provider.dart' show CartProvider;  // Use show to be explicit
+import './screens/cart_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,13 +31,38 @@ void main() async {
         ChangeNotifierProvider(create: (_) => PurchaseHistoryProvider()),
         ChangeNotifierProvider(create: (_) => SignUpProvider()),
         ChangeNotifierProvider(create: (_) => SignInProvider()),
-        ChangeNotifierProvider(create: (_) => SplashProvider()),
+        ChangeNotifierProvider(create: (_) => CartProvider()),
         ChangeNotifierProvider(create: (_) => TopUpProvider()),
-        ChangeNotifierProvider(create: (_) => CartProvider()),  // Using the explicitly imported CartProvider
       ],
       child: const MyApp(),
     ),
   );
+}
+
+class AuthWrapper extends StatelessWidget {
+  const AuthWrapper({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+
+        if (snapshot.hasData && FirebaseAuth.instance.currentUser != null) {
+          return const FarmFreshScreen();
+        }
+
+        return const SignInScreen();
+      },
+    );
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -62,18 +87,17 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      initialRoute: '/splash_screen',
+      home: const AuthWrapper(),
       routes: {
-        '/': (context) => const FarmFreshScreen(),
+        '/sign_in': (context) => const SignInScreen(),
+        '/sign_up': (context) => const SignUpScreen(),
         '/purchase_history': (context) => const PurchaseHistoryScreen(),
         '/product_details': (context) => const ProductDetailScreen(),
         '/profile': (context) => const ProfileScreen(),
-        '/sign_up': (context) => const SignUpScreen(),
         '/balance': (context) => const BalanceScreen(),
-        '/cart': (context) => const cart_screen.CartPage(),
-        '/splash_screen': (context) => const SplashScreen(),
-        '/sign_in': (context) => const SignInScreen(),
+        '/cart': (context) => const CartPage(),
         '/top_up': (context) => const TopUpScreen(),
+        '/explore': (context) => const FarmFreshScreen(),
       },
     );
   }
@@ -93,7 +117,12 @@ class _SplashScreenState extends State<SplashScreen> {
     final int randomSeconds = Random().nextInt(5) + 8;
 
     Timer(Duration(seconds: randomSeconds), () {
-      Navigator.pushReplacementNamed(context, '/sign_up');
+      // Check if user is already signed in
+      if (FirebaseAuth.instance.currentUser != null) {
+        Navigator.pushReplacementNamed(context, '/explore');
+      } else {
+        Navigator.pushReplacementNamed(context, '/sign_in');
+      }
     });
   }
 
