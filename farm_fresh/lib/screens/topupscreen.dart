@@ -226,7 +226,7 @@ class TopUpScreen extends StatelessWidget {
         ],
         onTap: (index) {
           if (index == 0) {
-            Navigator.pushReplacementNamed(context, '/home');
+            Navigator.pushReplacementNamed(context, '/explore');
           } else if (index == 1) {
             Navigator.pushReplacementNamed(context, '/cart');
           } else if (index == 2) {
