@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import './cart_provider.dart'; // Import the centralized CartProvider
+import './cart_provider.dart';
 
-// ExploreProvider remains the same
 class ExploreProvider extends ChangeNotifier {
   final List<String> _favorites = [];
 
@@ -43,6 +42,45 @@ class FarmFreshScreen extends StatelessWidget {
             ),
           ),
           actions: [
+            Stack(
+              children: [
+                IconButton(
+                  icon: const Icon(
+                    Icons.shopping_cart_outlined,
+                    color: Color(0xFF1B8E3D),
+                  ),
+                  onPressed: () => Navigator.pushNamed(context, '/cart'),
+                ),
+                Consumer<CartProvider>(
+                  builder: (context, cartProvider, child) {
+                    if (cartProvider.items.isEmpty) return const SizedBox();
+                    return Positioned(
+                      right: 8,
+                      top: 8,
+                      child: Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: const BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 16,
+                          minHeight: 16,
+                        ),
+                        child: Text(
+                          '${cartProvider.items.length}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
             Container(
               margin: const EdgeInsets.only(right: 8),
               decoration: BoxDecoration(
@@ -236,10 +274,12 @@ class ProductCard extends StatelessWidget {
                     const SizedBox(height: 8),
                     SizedBox(
                       width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // Add to cart using the correct CartProvider
-                          context.read<CartProvider>().addItem(
+                      child: Consumer<CartProvider>(
+                        builder: (context, cartProvider, child) {
+                          return ElevatedButton(
+                            onPressed: () {
+                              // Add to cart
+                              cartProvider.addItem(
                                 CartItem(
                                   name: 'Berries',
                                   description: 'Fresh berries',
@@ -249,32 +289,49 @@ class ProductCard extends StatelessWidget {
                                 ),
                               );
 
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Added to cart'),
-                              duration: Duration(seconds: 2),
-                              backgroundColor: Colors.green,
+                              // Show success message with View Cart option
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Row(
+                                    children: [
+                                      const Icon(Icons.check_circle, color: Colors.white),
+                                      const SizedBox(width: 8),
+                                      const Text('Added to cart'),
+                                      const Spacer(),
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pushNamed(context, '/cart');
+                                        },
+                                        child: const Text(
+                                          'VIEW CART',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  duration: const Duration(seconds: 2),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF1B8E3D),
+                              foregroundColor: Colors.white,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                            ),
+                            child: const Text(
+                              'Add to Cart',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           );
-                          
-                          Navigator.pushNamed(context, '/cart');
                         },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF1B8E3D),
-                          foregroundColor: Colors.white,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                        ),
-                        child: const Text(
-                          'Add to Cart',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
                       ),
                     ),
                   ],

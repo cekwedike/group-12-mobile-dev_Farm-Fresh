@@ -34,6 +34,44 @@ class ProductDetailScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
+        actions: [
+          Stack(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.shopping_cart),
+                onPressed: () => Navigator.pushNamed(context, '/cart'),
+              ),
+              Consumer<CartProvider>(
+                builder: (context, cartProvider, child) {
+                  if (cartProvider.items.isEmpty) return const SizedBox();
+                  return Positioned(
+                    right: 8,
+                    top: 8,
+                    child: Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: const BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      constraints: const BoxConstraints(
+                        minWidth: 16,
+                        minHeight: 16,
+                      ),
+                      child: Text(
+                        '${cartProvider.items.length}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -110,33 +148,45 @@ class ProductDetailScreen extends StatelessWidget {
                 },
               ),
               const SizedBox(height: 30),
-              Consumer<ProductDetailProvider>(
-                builder: (context, provider, child) {
+              Consumer2<ProductDetailProvider, CartProvider>(
+                builder: (context, detailProvider, cartProvider, child) {
                   return ElevatedButton(
                     onPressed: () {
-                      // Add to cart using the centralized CartProvider
-                      final cartProvider = context.read<CartProvider>();
+                      // Add to cart
                       cartProvider.addItem(
                         CartItem(
                           name: 'Berries',
                           description: 'Fresh, handpicked berries',
-                          quantity: provider.quantity,
-                          price: provider._berryPrice.toDouble(),
+                          quantity: detailProvider.quantity,
+                          price: detailProvider._berryPrice.toDouble(),
                           image: 'assets/berries.jpg',
                         ),
                       );
                       
                       // Show success message
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Added to cart'),
-                          duration: Duration(seconds: 2),
+                        SnackBar(
+                          content: Row(
+                            children: [
+                              const Icon(Icons.check_circle, color: Colors.white),
+                              const SizedBox(width: 8),
+                              const Text('Added to cart'),
+                              const Spacer(),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pushNamed(context, '/cart');
+                                },
+                                child: const Text(
+                                  'VIEW CART',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              )
+                            ],
+                          ),
+                          duration: const Duration(seconds: 2),
                           backgroundColor: Colors.green,
                         ),
                       );
-                      
-                      // Navigate to cart
-                      Navigator.pushNamed(context, '/cart');
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF1B8E3D),
