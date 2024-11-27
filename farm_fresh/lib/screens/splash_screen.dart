@@ -25,11 +25,11 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     final int randomSeconds = Random().nextInt(4) + 12;  // 12-15 seconds
 
     Timer(Duration(seconds: randomSeconds), () {
-      if (mounted) {  // Check if widget is still mounted
+      if (mounted) {
         if (FirebaseAuth.instance.currentUser != null) {
           Navigator.pushReplacementNamed(context, '/explore');
         } else {
-          Navigator.pushReplacementNamed(context, '/sign_in');
+          Navigator.pushReplacementNamed(context, '/auth');
         }
       }
     });
@@ -48,64 +48,68 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       child: Scaffold(
         backgroundColor: const Color(0xFF1B8E3D),
         body: Center(
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              // Rotating small circles
-              AnimatedBuilder(
-                animation: _controller,
-                builder: (_, child) {
-                  return Transform.rotate(
-                    angle: _controller.value * 2 * pi,
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        // First rotating circle
-                        Positioned(
-                          top: -20,
-                          child: Container(
-                            width: 15,
-                            height: 15,
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
+          child: SizedBox(
+            width: 100,  // Container for the entire animation
+            height: 100,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                // Rotating small circles
+                AnimatedBuilder(
+                  animation: _controller,
+                  builder: (_, child) {
+                    return Transform.rotate(
+                      angle: _controller.value * 2 * pi,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          // First rotating circle
+                          Positioned(
+                            top: 0,
+                            child: Container(
+                              width: 12,
+                              height: 12,
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                              ),
                             ),
                           ),
-                        ),
-                        // Second rotating circle
-                        Positioned(
-                          bottom: -20,
-                          child: Container(
-                            width: 15,
-                            height: 15,
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
+                          // Second rotating circle
+                          Positioned(
+                            bottom: 0,
+                            child: Container(
+                              width: 12,
+                              height: 12,
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-              // Center fixed circle with loading indicator
-              Container(
-                width: 50,
-                height: 50,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
+                        ],
+                      ),
+                    );
+                  },
                 ),
-                child: const Center(
-                  child: Icon(
-                    Icons.wb_sunny_outlined,
-                    color: Color(0xFF1B8E3D),
-                    size: 30,
+                // Center fixed circle with loading icon
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Center(
+                    child: Icon(
+                      Icons.wb_sunny_outlined,
+                      color: Color(0xFF1B8E3D),
+                      size: 24,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

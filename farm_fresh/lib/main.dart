@@ -86,9 +86,10 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const SplashScreen(),  // Set SplashScreen as initial screen
+      initialRoute: '/splash',
       routes: {
-        '/': (context) => const AuthWrapper(),
+        '/splash': (context) => const SplashScreen(),
+        '/auth': (context) => const AuthWrapper(),
         '/sign_in': (context) => const SignInScreen(),
         '/sign_up': (context) => const SignUpScreen(),
         '/purchase_history': (context) => const PurchaseHistoryScreen(),
