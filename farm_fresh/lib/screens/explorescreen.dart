@@ -248,7 +248,18 @@ class ProductCard extends StatelessWidget {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      Navigator.pushNamed(context, '/product_details');
+                      Navigator.pushNamed(
+                        context,
+                        '/product_details',
+                        arguments: {
+                          'name': name,
+                          'price': price,
+                          'description': description,
+                          'rating': rating,
+                          'reviews': reviews,
+                          'vendor': vendor,
+                        },
+                      );
                     },
                     child: ClipRRect(
                       borderRadius: const BorderRadius.vertical(
@@ -303,7 +314,7 @@ class ProductCard extends StatelessWidget {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: 4),
                     Text(
                       vendor,
                       style: TextStyle(
@@ -315,14 +326,14 @@ class ProductCard extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          'RWF ${price.toString()}',
+                          'RWF $price',
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                         const Spacer(),
-                        Icon(
+                        const Icon(
                           Icons.star,
                           color: Colors.amber,
                           size: 16,

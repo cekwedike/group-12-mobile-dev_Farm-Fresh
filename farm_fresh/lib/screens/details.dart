@@ -5,9 +5,15 @@ import './explorescreen.dart';
 
 class ProductDetailProvider extends ChangeNotifier {
   int _quantity = 1;
+  double _price = 0;
+
+  void setPrice(double price) {
+    _price = price;
+    notifyListeners();
+  }
 
   int get quantity => _quantity;
-  double get totalPrice => _quantity * 2500.0; // Base price for Fresh Strawberries
+  double get totalPrice => _quantity * _price;
 
   void increaseQuantity() {
     _quantity++;
@@ -27,6 +33,19 @@ class ProductDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final arguments = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final name = arguments['name'] as String;
+    final price = arguments['price'] as int;
+    final description = arguments['description'] as String;
+    final rating = arguments['rating'] as double;
+    final reviews = arguments['reviews'] as int;
+    final vendor = arguments['vendor'] as String;
+
+    // Set the price in the provider
+    Future.microtask(() {
+      context.read<ProductDetailProvider>().setPrice(price.toDouble());
+    });
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Product Details'),
@@ -91,9 +110,9 @@ class ProductDetailScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
-                        'Fresh Strawberries',
-                        style: TextStyle(
+                      Text(
+                        name,
+                        style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
                         ),
@@ -102,13 +121,13 @@ class ProductDetailScreen extends StatelessWidget {
                         builder: (context, provider, child) {
                           return IconButton(
                             icon: Icon(
-                              provider.isFavorite('Fresh Strawberries')
+                              provider.isFavorite(name)
                                   ? Icons.favorite
                                   : Icons.favorite_border,
                               color: const Color(0xFF1B8E3D),
                             ),
                             onPressed: () {
-                              provider.toggleFavorite('Fresh Strawberries');
+                              provider.toggleFavorite(name);
                             },
                           );
                         },
@@ -116,7 +135,7 @@ class ProductDetailScreen extends StatelessWidget {
                     ],
                   ),
                   Text(
-                    'Berry Haven Farms',
+                    vendor,
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.grey[600],
@@ -130,15 +149,15 @@ class ProductDetailScreen extends StatelessWidget {
                         color: Colors.amber,
                         size: 20,
                       ),
-                      const Text(
-                        ' 4.8',
-                        style: TextStyle(
+                      Text(
+                        ' $rating',
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
-                        ' (892 reviews)',
+                        ' ($reviews reviews)',
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey[600],
@@ -168,9 +187,9 @@ class ProductDetailScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    'Sweet & Juicy fresh strawberries handpicked from our local farm. Perfect for snacking, desserts, or adding to your favorite smoothie. Our strawberries are grown using sustainable farming practices to ensure the best quality and taste.',
-                    style: TextStyle(
+                  Text(
+                    '$description Our products are grown using sustainable farming practices to ensure the best quality and taste.',
+                    style: const TextStyle(
                       fontSize: 16,
                       color: Colors.black87,
                       height: 1.5,
@@ -235,10 +254,10 @@ class ProductDetailScreen extends StatelessWidget {
                         onPressed: () {
                           cartProvider.addItem(
                             CartItem(
-                              name: 'Fresh Strawberries',
-                              description: 'Sweet & Juicy • Berry Haven Farms',
+                              name: name,
+                              description: '$description • $vendor',
                               quantity: detailProvider.quantity,
-                              price: 2500.0,
+                              price: price.toDouble(),
                               image: 'assets/berries.jpg',
                             ),
                           );
