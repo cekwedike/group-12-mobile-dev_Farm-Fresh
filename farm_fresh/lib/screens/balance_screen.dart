@@ -122,7 +122,7 @@ class _BalanceScreenState extends State<BalanceScreen> {
         onTap: (index) {
           // Handle bottom navigation tap
           if (index == 0) {
-            Navigator.pushReplacementNamed(context, '/');
+            Navigator.pushReplacementNamed(context, '/home');
           } else if (index == 1) {
             Navigator.pushReplacementNamed(context, '/cart');
           } else if (index == 2) {

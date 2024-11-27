@@ -437,7 +437,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ],
         onTap: (index) {
           if (index == 0) {
-            Navigator.pushReplacementNamed(context, '/');
+            Navigator.pushReplacementNamed(context, '/home');
           } else if (index == 1) {
             Navigator.pushReplacementNamed(context, '/cart');
           }

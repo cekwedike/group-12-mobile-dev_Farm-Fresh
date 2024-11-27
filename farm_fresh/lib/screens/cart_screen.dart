@@ -186,7 +186,7 @@ class CartPage extends StatelessWidget {
         selectedItemColor: Colors.green,
         onTap: (index) {
           if (index == 0) {
-            Navigator.pushReplacementNamed(context, '/');
+            Navigator.pushReplacementNamed(context, '/home');
           }
           if (index == 2) {
             Navigator.pushReplacementNamed(context, '/profile');
