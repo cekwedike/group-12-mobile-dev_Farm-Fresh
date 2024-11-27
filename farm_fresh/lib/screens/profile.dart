@@ -1,194 +1,420 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-void main() {
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => ProfileProvider()),
-      ],
-      child: const MyApp(),
-    ),
-  );
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Profile Screen with Provider',
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-      ),
-      home: const ProfileScreen(),
-    );
-  }
-}
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProfileProvider extends ChangeNotifier {
-  bool _isLoggedIn = true;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  bool _isEditing = false;
+  bool _isLoading = false;
 
-  bool get isLoggedIn => _isLoggedIn;
+  // User data
+  String _fullName = '';
+  String _email = '';
+  String _phoneNumber = '';
+  String _address = '';
+  String _deliveryAddress = '';
 
-  void logout() {
-    _isLoggedIn = false;
+  // Getters
+  bool get isEditing => _isEditing;
+  bool get isLoading => _isLoading;
+  String get fullName => _fullName;
+  String get email => _email;
+  String get phoneNumber => _phoneNumber;
+  String get address => _address;
+  String get deliveryAddress => _deliveryAddress;
+
+  // Initialize profile data
+  Future<void> initializeProfile() async {
+    _isLoading = true;
     notifyListeners();
+
+    try {
+      final User? user = _auth.currentUser;
+      if (user != null) {
+        _email = user.email ?? '';
+        
+        // Get additional user data from Firestore
+        final userData = await _firestore.collection('users').doc(user.uid).get();
+        
+        if (userData.exists) {
+          final data = userData.data() as Map<String, dynamic>;
+          _fullName = data['fullName'] ?? '';
+          _phoneNumber = data['phoneNumber'] ?? '';
+          _address = data['address'] ?? '';
+          _deliveryAddress = data['deliveryAddress'] ?? '';
+        } else {
+          // If no Firestore data exists, use data from Firebase Auth
+          _fullName = user.displayName ?? '';
+        }
+      }
+    } catch (e) {
+      debugPrint('Error initializing profile: $e');
+    }
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  // Toggle edit mode
+  void toggleEdit() {
+    _isEditing = !_isEditing;
+    notifyListeners();
+  }
+
+  // Update user data
+  Future<void> updateProfile({
+    required String fullName,
+    required String phoneNumber,
+    required String address,
+    required String deliveryAddress,
+  }) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final user = _auth.currentUser;
+      if (user != null) {
+        // Update display name in Firebase Auth
+        await user.updateDisplayName(fullName);
+
+        // Update data in Firestore
+        await _firestore.collection('users').doc(user.uid).set({
+          'fullName': fullName,
+          'email': user.email,
+          'phoneNumber': phoneNumber,
+          'address': address,
+          'deliveryAddress': deliveryAddress,
+          'updatedAt': FieldValue.serverTimestamp(),
+        }, SetOptions(merge: true));
+
+        // Update local state
+        _fullName = fullName;
+        _phoneNumber = phoneNumber;
+        _address = address;
+        _deliveryAddress = deliveryAddress;
+        _isEditing = false;
+      }
+    } catch (e) {
+      debugPrint('Error updating profile: $e');
+      rethrow;
+    }
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  // Sign out
+  Future<void> signOut() async {
+    await _auth.signOut();
   }
 }
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  final _formKey = GlobalKey<FormState>();
+  late TextEditingController _fullNameController;
+  late TextEditingController _emailController;
+  late TextEditingController _phoneController;
+  late TextEditingController _addressController;
+  late TextEditingController _deliveryAddressController;
+
+  @override
+  void initState() {
+    super.initState();
+    _fullNameController = TextEditingController();
+    _emailController = TextEditingController();
+    _phoneController = TextEditingController();
+    _addressController = TextEditingController();
+    _deliveryAddressController = TextEditingController();
+
+    // Initialize profile data
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ProfileProvider>().initializeProfile().then((_) {
+        final provider = context.read<ProfileProvider>();
+        _fullNameController.text = provider.fullName;
+        _emailController.text = provider.email;
+        _phoneController.text = provider.phoneNumber;
+        _addressController.text = provider.address;
+        _deliveryAddressController.text = provider.deliveryAddress;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _fullNameController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    _addressController.dispose();
+    _deliveryAddressController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Padding(
-              padding: EdgeInsets.only(left: 16, top: 12),
-              child: Text(
-                'Profile',
-                style: TextStyle(
-                  color: Color(0xFF1B8E3D),
-                  fontSize: 24,
-                  fontWeight: FontWeight.w600,
+        child: Consumer<ProfileProvider>(
+          builder: (context, provider, child) {
+            if (provider.isLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Profile',
+                      style: TextStyle(
+                        color: Color(0xFF1B8E3D),
+                        fontSize: 24,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF1B8E3D),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 60,
+                            height: 60,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: const Icon(
+                              Icons.person,
+                              color: Color(0xFF1B8E3D),
+                              size: 40,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                provider.fullName,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              Text(
+                                provider.email,
+                                style: const TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Spacer(),
+                          IconButton(
+                            icon: Icon(
+                              provider.isEditing ? Icons.close : Icons.edit,
+                              color: Colors.white,
+                            ),
+                            onPressed: provider.toggleEdit,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Personal Information',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            controller: _fullNameController,
+                            enabled: provider.isEditing,
+                            decoration: const InputDecoration(
+                              labelText: 'Full Name',
+                              border: OutlineInputBorder(),
+                              prefixIcon: Icon(Icons.person_outline),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your full name';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            controller: _emailController,
+                            enabled: false, // Email cannot be edited
+                            decoration: const InputDecoration(
+                              labelText: 'Email',
+                              border: OutlineInputBorder(),
+                              prefixIcon: Icon(Icons.email_outlined),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            controller: _phoneController,
+                            enabled: provider.isEditing,
+                            decoration: const InputDecoration(
+                              labelText: 'Phone Number',
+                              border: OutlineInputBorder(),
+                              prefixIcon: Icon(Icons.phone_outlined),
+                            ),
+                            keyboardType: TextInputType.phone,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your phone number';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 24),
+                          const Text(
+                            'Addresses',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            controller: _addressController,
+                            enabled: provider.isEditing,
+                            decoration: const InputDecoration(
+                              labelText: 'Primary Address',
+                              border: OutlineInputBorder(),
+                              prefixIcon: Icon(Icons.home_outlined),
+                            ),
+                            maxLines: 2,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your address';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            controller: _deliveryAddressController,
+                            enabled: provider.isEditing,
+                            decoration: const InputDecoration(
+                              labelText: 'Delivery Address',
+                              border: OutlineInputBorder(),
+                              prefixIcon: Icon(Icons.local_shipping_outlined),
+                            ),
+                            maxLines: 2,
+                          ),
+                          const SizedBox(height: 24),
+                          if (provider.isEditing)
+                            ElevatedButton(
+                              onPressed: () async {
+                                if (_formKey.currentState!.validate()) {
+                                  try {
+                                    await provider.updateProfile(
+                                      fullName: _fullNameController.text,
+                                      phoneNumber: _phoneController.text,
+                                      address: _addressController.text,
+                                      deliveryAddress: _deliveryAddressController.text,
+                                    );
+                                    if (context.mounted) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text('Profile updated successfully'),
+                                          backgroundColor: Colors.green,
+                                        ),
+                                      );
+                                    }
+                                  } catch (e) {
+                                    if (context.mounted) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text('Failed to update profile'),
+                                          backgroundColor: Colors.red,
+                                        ),
+                                      );
+                                    }
+                                  }
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF1B8E3D),
+                                minimumSize: const Size(double.infinity, 50),
+                              ),
+                              child: const Text('Save Changes'),
+                            ),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: () async {
+                              await provider.signOut();
+                              if (context.mounted) {
+                                Navigator.pushReplacementNamed(context, '/sign_in');
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                              minimumSize: const Size(double.infinity, 50),
+                            ),
+                            child: const Text('Sign Out'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                color: const Color(0xFF1B8E3D),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Stack(
-                children: [
-                  Positioned(
-                    right: 0,
-                    child: ClipRRect(
-                      borderRadius: const BorderRadius.only(
-                        topRight: Radius.circular(16),
-                      ),
-                      child: Image.asset(
-                        'assets/profile_wave.png',
-                        height: 100,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Row(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Image.asset(
-                            'assets/profile_photo.jpg',
-                            width: 48,
-                            height: 48,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        const Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Sebastian Ingabire',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            SizedBox(height: 4),
-                            Text(
-                              'BUYER',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
-            ListTile(
-              leading: const Icon(Icons.account_balance_wallet_outlined,
-                  color: Color(0xFF1B8E3D)),
-              title: const Text('Balance'),
-              onTap: () => Navigator.pushNamed(
-                  context, '/balance'), // Navigate to Balance Screen
-            ),
-            ListTile(
-              leading: const Icon(Icons.history, color: Color(0xFF1B8E3D)),
-              title: const Text('Purchase History'),
-              onTap: () => Navigator.pushNamed(context,
-                  '/purchase_history'), // Navigate to Purchase History Screen
-            ),
-            const Spacer(),
-            Consumer<ProfileProvider>(
-              builder: (context, provider, child) {
-                return ElevatedButton(
-                  onPressed: () {
-                    provider.logout();
-                    Navigator.pushReplacementNamed(context, '/sign_in');
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF4CAF50),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.logout),
-                      SizedBox(width: 8),
-                      Text('Sign Out'),
-                    ],
-                  ),
-                );
-              },
-            ),
-            const SizedBox(height: 24),
-            BottomNavigationBar(
-              selectedItemColor: const Color(0xFF1B8E3D),
-              unselectedItemColor: Colors.grey,
-              currentIndex: 2,
-              items: const [
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.home_outlined), label: 'Home'),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.shopping_cart_outlined), label: 'Cart'),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.person), label: 'Profile'),
-              ],
-              onTap: (index) {
-                // Handle bottom navigation bar taps
-                if (index == 0) {
-                  Navigator.pushNamed(context, '/');
-                }
-                if (index == 1) {
-                  Navigator.pushNamed(context, '/cart');
-                }
-                if (index == 2) {
-                  Navigator.pushNamed(context, '/profile');
-                }
-              },
-            ),
-          ],
+            );
+          },
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: 2,
+        selectedItemColor: const Color(0xFF1B8E3D),
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_cart_outlined),
+            label: 'Cart',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+        ],
+        onTap: (index) {
+          if (index == 0) {
+            Navigator.pushReplacementNamed(context, '/');
+          } else if (index == 1) {
+            Navigator.pushReplacementNamed(context, '/cart');
+          }
+        },
       ),
     );
   }
