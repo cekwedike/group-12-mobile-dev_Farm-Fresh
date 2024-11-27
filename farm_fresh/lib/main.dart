@@ -13,8 +13,9 @@ import './screens/details.dart';
 import './screens/profile.dart';
 import './screens/sign_up_screen.dart';
 import './screens/balance_screen.dart';
-import './screens/cart_screen.dart';
+import './screens/cart_screen.dart' as cart_screen;
 import './screens/topupscreen.dart';
+import './screens/cart_provider.dart' show CartProvider;  // Use show to be explicit
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,7 +33,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => SignInProvider()),
         ChangeNotifierProvider(create: (_) => SplashProvider()),
         ChangeNotifierProvider(create: (_) => TopUpProvider()),
-        // ChangeNotifierProvider(create: (_) => CartProvider()),
+        ChangeNotifierProvider(create: (_) => CartProvider()),  // Using the explicitly imported CartProvider
       ],
       child: const MyApp(),
     ),
@@ -69,7 +70,7 @@ class MyApp extends StatelessWidget {
         '/profile': (context) => const ProfileScreen(),
         '/sign_up': (context) => const SignUpScreen(),
         '/balance': (context) => const BalanceScreen(),
-        '/cart': (context) => const CartPage(),
+        '/cart': (context) => const cart_screen.CartPage(),
         '/splash_screen': (context) => const SplashScreen(),
         '/sign_in': (context) => const SignInScreen(),
         '/top_up': (context) => const TopUpScreen(),
@@ -89,7 +90,6 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // Generate a random delay between 8 to 12 seconds
     final int randomSeconds = Random().nextInt(5) + 8;
 
     Timer(Duration(seconds: randomSeconds), () {
@@ -117,7 +117,6 @@ class _SplashScreenState extends State<SplashScreen> {
             Stack(
               alignment: Alignment.center,
               children: [
-                // Main large logo with shadow
                 Container(
                   width: 80,
                   height: 80,
@@ -139,7 +138,6 @@ class _SplashScreenState extends State<SplashScreen> {
                     ),
                   ),
                 ),
-                // Top logo with shadow
                 Positioned(
                   bottom: 60,
                   child: Container(
@@ -164,7 +162,6 @@ class _SplashScreenState extends State<SplashScreen> {
                     ),
                   ),
                 ),
-                // Bottom logo with shadow
                 Positioned(
                   top: 60,
                   child: Container(

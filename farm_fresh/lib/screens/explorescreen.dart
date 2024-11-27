@@ -1,32 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import './cart_provider.dart'; // Import the centralized CartProvider
 
-void main() {
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => ExploreProvider()),
-      ],
-      child: const MyApp(),
-    ),
-  );
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Explore Screen with Provider',
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-      ),
-      home: const FarmFreshScreen(),
-    );
-  }
-}
-
+// ExploreProvider remains the same
 class ExploreProvider extends ChangeNotifier {
   final List<String> _favorites = [];
 
@@ -112,7 +88,7 @@ class FarmFreshScreen extends StatelessWidget {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0, // Home is selected
+        currentIndex: 0,
         selectedItemColor: const Color(0xFF1B8E3D),
         unselectedItemColor: Colors.grey,
         items: const [
@@ -130,7 +106,6 @@ class FarmFreshScreen extends StatelessWidget {
           ),
         ],
         onTap: (index) {
-          // Handle navigation
           if (index == 0) {
             Navigator.pushReplacementNamed(context, '/');
           } else if (index == 1) {
@@ -263,6 +238,25 @@ class ProductCard extends StatelessWidget {
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
+                          // Add to cart using the correct CartProvider
+                          context.read<CartProvider>().addItem(
+                                CartItem(
+                                  name: 'Berries',
+                                  description: 'Fresh berries',
+                                  quantity: 1,
+                                  price: 500.0,
+                                  image: 'assets/berries.jpg',
+                                ),
+                              );
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Added to cart'),
+                              duration: Duration(seconds: 2),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+                          
                           Navigator.pushNamed(context, '/cart');
                         },
                         style: ElevatedButton.styleFrom(
