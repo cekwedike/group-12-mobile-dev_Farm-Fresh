@@ -120,7 +120,56 @@ class FarmFreshScreen extends StatelessWidget {
               mainAxisSpacing: 16,
               crossAxisSpacing: 16,
               childAspectRatio: 0.6,
-              children: List.generate(4, (index) => const ProductCard()),
+              children: const [
+                ProductCard(
+                  name: 'Fresh Strawberries',
+                  price: 2500,
+                  description: 'Sweet & Juicy',
+                  rating: 4.8,
+                  reviews: 892,
+                  vendor: 'Berry Haven Farms'
+                ),
+                ProductCard(
+                  name: 'Organic Raspberries',
+                  price: 3200,
+                  description: 'Premium Quality',
+                  rating: 4.5,
+                  reviews: 672,
+                  vendor: 'Nature\'s Best'
+                ),
+                ProductCard(
+                  name: 'Wild Cranberries',
+                  price: 4500,
+                  description: 'Forest Picked',
+                  rating: 4.7,
+                  reviews: 445,
+                  vendor: 'Forest Delights'
+                ),
+                ProductCard(
+                  name: 'Red Currants',
+                  price: 1800,
+                  description: 'Garden Fresh',
+                  rating: 4.6,
+                  reviews: 523,
+                  vendor: 'Garden Fresh Co.'
+                ),
+                ProductCard(
+                  name: 'Goji Berries',
+                  price: 8500,
+                  description: 'Premium Dried',
+                  rating: 4.9,
+                  reviews: 328,
+                  vendor: 'Superfood Hub'
+                ),
+                ProductCard(
+                  name: 'Mixed Red Berries',
+                  price: 5200,
+                  description: 'Assorted Selection',
+                  rating: 4.4,
+                  reviews: 756,
+                  vendor: 'Berry Mix Masters'
+                ),
+              ],
             ),
           ),
         ],
@@ -158,7 +207,22 @@ class FarmFreshScreen extends StatelessWidget {
 }
 
 class ProductCard extends StatelessWidget {
-  const ProductCard({super.key});
+  final String name;
+  final int price;
+  final String description;
+  final double rating;
+  final int reviews;
+  final String vendor;
+
+  const ProductCard({
+    super.key,
+    required this.name,
+    required this.price,
+    required this.description,
+    required this.rating,
+    required this.reviews,
+    required this.vendor,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -205,7 +269,7 @@ class ProductCard extends StatelessWidget {
                       builder: (context, provider, child) {
                         return GestureDetector(
                           onTap: () {
-                            provider.toggleFavorite('Berries');
+                            provider.toggleFavorite(name);
                           },
                           child: Container(
                             padding: const EdgeInsets.all(4),
@@ -214,7 +278,7 @@ class ProductCard extends StatelessWidget {
                               borderRadius: BorderRadius.circular(50),
                             ),
                             child: Icon(
-                              provider.isFavorite('Berries')
+                              provider.isFavorite(name)
                                   ? Icons.favorite
                                   : Icons.favorite_border,
                               color: const Color(0xFF1B8E3D),
@@ -232,38 +296,46 @@ class ProductCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Berries',
-                      style: TextStyle(
+                    Text(
+                      name,
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      vendor,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey.shade600,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        const Text(
-                          'RWF 500',
-                          style: TextStyle(
+                        Text(
+                          'RWF ${price.toString()}',
+                          style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                         const Spacer(),
-                        const Icon(
+                        Icon(
                           Icons.star,
                           color: Colors.amber,
                           size: 16,
                         ),
-                        const Text(
-                          ' 4.5',
-                          style: TextStyle(
+                        Text(
+                          ' $rating',
+                          style: const TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
                         Text(
-                          ' (672)',
+                          ' ($reviews)',
                           style: TextStyle(
                             fontSize: 13,
                             color: Colors.grey.shade600,
@@ -278,18 +350,16 @@ class ProductCard extends StatelessWidget {
                         builder: (context, cartProvider, child) {
                           return ElevatedButton(
                             onPressed: () {
-                              // Add to cart
                               cartProvider.addItem(
                                 CartItem(
-                                  name: 'Berries',
-                                  description: 'Fresh berries',
+                                  name: name,
+                                  description: '$description • $vendor',
                                   quantity: 1,
-                                  price: 500.0,
+                                  price: price.toDouble(),
                                   image: 'assets/berries.jpg',
                                 ),
                               );
 
-                              // Show success message with View Cart option
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Row(
